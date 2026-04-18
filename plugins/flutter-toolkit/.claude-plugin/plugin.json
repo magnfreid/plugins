@@ -1,0 +1,8 @@
+{
+  "name": "flutter-toolkit",
+  "version": "0.1.0",
+  "description": "Flutter development workflows — BLoC state management, testing patterns, feature scaffolding.",
+  "author": {
+    "name": "Magnus"
+  }
+}

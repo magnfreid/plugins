@@ -1,0 +1,13 @@
+{
+  "name": "magnus-plugins",
+  "owner": {
+    "name": "Magnus"
+  },
+  "plugins": [
+    {
+      "name": "flutter-toolkit",
+      "source": "./plugins/flutter-toolkit",
+      "description": "Flutter development workflows — BLoC state management, testing patterns, feature scaffolding."
+    }
+  ]
+}
