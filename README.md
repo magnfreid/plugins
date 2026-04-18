@@ -7,7 +7,7 @@ A personal marketplace of Claude Code plugins, focused on mobile development wor
 Add this marketplace to Claude Code:
 
 ```
-/plugin marketplace add github.com/magnfreid/magnus-plugins
+/plugin marketplace add https://github.com/magnfreid/plugins.git
 ```
 
 Then install any plugin from it:
