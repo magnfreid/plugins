@@ -33,6 +33,7 @@ plugins/
       plugin.json          # plugin manifest
     skills/<skill>/SKILL.md
     commands/<cmd>.md
+    agents/<agent>.md
 ```
 
 ## Versioning
