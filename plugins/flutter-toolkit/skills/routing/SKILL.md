@@ -36,7 +36,7 @@ Features own their **pages**, not their routes. Pages live in `lib/<feature>/vie
 
 ### `routes.dart`
 
-Keep every route and every name/path constant here:
+Keep every route and every name/path constant here. Each route is a record tuple with named `name` and `path` parameters, bundled under `AppRoutes`:
 
 ```dart
 // lib/app/router/routes.dart
@@ -46,32 +46,26 @@ import 'package:flutter_starter/home/view/home_page.dart';
 import 'package:flutter_starter/login/view/login_page.dart';
 import 'package:flutter_starter/settings/view/settings_page.dart';
 
-abstract final class Routes {
-  static const login = '/login';
-  static const home = '/';
-  static const settings = '/settings';
-}
-
-abstract final class RouteNames {
-  static const login = 'login';
-  static const home = 'home';
-  static const settings = 'settings';
+abstract final class AppRoutes {
+  static const ({String name, String path}) login = (name: 'login', path: '/login');
+  static const ({String name, String path}) home = (name: 'home', path: '/');
+  static const ({String name, String path}) settings = (name: 'settings', path: '/settings');
 }
 
 final appRoutes = <RouteBase>[
   GoRoute(
-    path: Routes.login,
-    name: RouteNames.login,
+    path: AppRoutes.login.path,
+    name: AppRoutes.login.name,
     builder: (context, state) => const LoginPage(),
   ),
   GoRoute(
-    path: Routes.home,
-    name: RouteNames.home,
+    path: AppRoutes.home.path,
+    name: AppRoutes.home.name,
     builder: (context, state) => const HomePage(),
     routes: [
       GoRoute(
         path: 'settings',
-        name: RouteNames.settings,
+        name: AppRoutes.settings.name,
         builder: (context, state) => const SettingsPage(),
       ),
     ],
@@ -79,7 +73,7 @@ final appRoutes = <RouteBase>[
 ];
 ```
 
-`abstract final class` prevents instantiation of the constants holder — these are namespaces, not types.
+`abstract final class` prevents instantiation — `AppRoutes` is a namespace holding route tuples with both `name` and `path` bundled together.
 
 ### `app_router.dart`
 
@@ -94,7 +88,7 @@ import 'routes.dart';
 
 class AppRouter {
   static GoRouter build({required AuthCubit authCubit}) => GoRouter(
-        initialLocation: Routes.home,
+        initialLocation: AppRoutes.home.path,
         routes: appRoutes,
         redirect: (context, state) => _authGuard(state, authCubit),
         refreshListenable: GoRouterRefreshStream(authCubit.stream),
@@ -102,10 +96,10 @@ class AppRouter {
 
   static String? _authGuard(GoRouterState state, AuthCubit authCubit) {
     final isAuthed = authCubit.state is AuthAuthenticated;
-    final isLoggingIn = state.matchedLocation == Routes.login;
+    final isLoggingIn = state.matchedLocation == AppRoutes.login.path;
 
-    if (!isAuthed && !isLoggingIn) return Routes.login;
-    if (isAuthed && isLoggingIn) return Routes.home;
+    if (!isAuthed && !isLoggingIn) return AppRoutes.login.path;
+    if (isAuthed && isLoggingIn) return AppRoutes.home.path;
     return null;
   }
 }
@@ -139,13 +133,13 @@ StatefulShellRoute.indexedStack(
   builder: (context, state, shell) => MainScaffold(shell: shell),
   branches: [
     StatefulShellBranch(routes: [
-      GoRoute(path: Routes.home, /* ... */),
+      GoRoute(path: AppRoutes.home.path, /* ... */),
     ]),
     StatefulShellBranch(routes: [
-      GoRoute(path: Routes.search, /* ... */),
+      GoRoute(path: AppRoutes.search.path, /* ... */),
     ]),
     StatefulShellBranch(routes: [
-      GoRoute(path: Routes.profile, /* ... */),
+      GoRoute(path: AppRoutes.profile.path, /* ... */),
     ]),
   ],
 )
@@ -179,5 +173,5 @@ Only go to per-feature route files (routes living inside each feature folder) if
 - **`Navigator.push(context, MaterialPageRoute(...))`** — bypasses the router, breaks deep linking and back/forward. Use `context.push` with a defined route.
 - **Gating navigation in `initState` / `build`** — navigation inside widget lifecycle is a race. Put it in `redirect`.
 - **Passing BLoCs through `extra`** — BLoCs are scoped via `BlocProvider`, not route arguments. Provide the BLoC at the route level if the destination needs it.
-- **Hardcoded path strings at call sites** — `context.go('/users/42')` scattered across the app. Use the `Routes.*` / `RouteNames.*` constants.
+- **Hardcoded path strings at call sites** — `context.go('/users/42')` scattered across the app. Use `AppRoutes.*` constants for paths and names.
 - **Deep nesting without a shell** — each level of nesting without a `ShellRoute` means losing the surrounding UI on navigation. Use shells deliberately.
