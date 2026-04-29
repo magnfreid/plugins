@@ -1,6 +1,6 @@
 ---
 name: bloc
-description: Flutter state management with BLoC/Cubit + Freezed. Trigger on any state or reactive logic in a Flutter app — "add a bloc for X", "write state for this feature", "handle loading/error state", Cubit vs BLoC decisions, BlocProvider/BlocBuilder/BlocListener usage, and the build_runner codegen step after editing Freezed files.
+description: Flutter state management with BLoC/Cubit + Freezed. Trigger on any state or reactive logic in a Flutter app — "add a bloc for X", "write state for this feature", "handle loading/error state", Cubit vs BLoC decisions, BlocProvider/BlocBuilder/BlocListener usage, event transformers (droppable, debounce, restartable, sequential), and the build_runner codegen step after editing Freezed files.
 ---
 
 # bloc
@@ -159,6 +159,97 @@ Rules:
 - Handlers are `Future<void>` if async, `void` otherwise.
 - No business logic in handlers — delegate to the repo, translate outcomes to states.
 - One public class per file; `LoginBloc` goes in `login_bloc.dart`.
+
+## Event transformers
+
+Transformers control how the BLoC processes events of a given type — debouncing, dropping, queuing, etc. They're passed as the `transformer` argument on `on<Event>()`.
+
+### When to apply a transformer
+
+Not every event needs one. Default (concurrent) is fine for most cases. Apply a transformer when the event has a specific concurrency or timing requirement:
+
+- **Droppable** — submit buttons, login, save, purchase. The user taps while a request is in-flight; the duplicate should be ignored, not queued. This is the most common transformer you'll reach for.
+- **Debounce** — search-as-you-type, text field validation. Wait for the user to stop typing before firing the handler. Typical duration: 300–500ms.
+- **Restartable** — autocomplete, live search results. Like debounce but also cancels the previous in-flight handler when a new event arrives. Use when the old result is stale the moment the user types another character.
+- **Sequential** — ordered writes, multi-step forms. Events must be processed one at a time, in order, with no dropping. Rarely needed — reach for it only when ordering guarantees matter.
+
+If none of these apply, don't add a transformer. The default concurrent behavior is correct for independent, non-overlapping events like navigation or UI toggles.
+
+### Using transformers — check the project first
+
+**Before importing `bloc_concurrency` or writing a transformer, search the project for existing implementations.** Many projects (including boilerplate setups) ship pre-built transformers under names like `droppable()`, `debounce()`, `throttle()`, `restartable()`, or similar. Check:
+
+1. `lib/core/` or `lib/shared/` or `packages/` for transformer files.
+2. Any `bloc_transformers`, `event_transformers`, or similarly named files/directories.
+3. Existing BLoCs in the project — see what they already use and import.
+
+If the project has its own transformers, use those. If not, `bloc_concurrency` is the standard package:
+
+```yaml
+dependencies:
+  bloc_concurrency: ^0.2.0
+```
+
+### Wiring transformers
+
+Transformers go on the `on<Event>()` registration, not on the BLoC class itself:
+
+```dart
+import 'package:bloc_concurrency/bloc_concurrency.dart';
+
+class LoginBloc extends Bloc<LoginEvent, LoginState> {
+  LoginBloc({required AuthRepository repo})
+      : _repo = repo,
+        super(const LoginState.initial()) {
+    on<LoginSubmitted>(
+      _onSubmitted,
+      transformer: droppable(),  // Ignore taps while login is in-flight
+    );
+    on<LoginResetRequested>(_onResetRequested); // No transformer needed
+  }
+  // ...
+}
+```
+
+For debounce, you typically write a small helper that returns an `EventTransformer`:
+
+```dart
+EventTransformer<E> debounce<E>({
+  Duration duration = const Duration(milliseconds: 300),
+}) {
+  return (events, mapper) =>
+      events.debounceTime(duration).asyncExpand(mapper);
+}
+```
+
+Or use the project's existing debounce transformer if one exists. Then apply it:
+
+```dart
+on<SearchQueryChanged>(
+  _onSearchQueryChanged,
+  transformer: debounce(duration: const Duration(milliseconds: 400)),
+);
+```
+
+### Common pairings
+
+| Event type | Transformer | Why |
+|---|---|---|
+| Form submit / login / save / purchase | `droppable()` | Prevent duplicate requests from button spam |
+| Search text changed | `debounce()` or `restartable()` | Wait for typing to settle; cancel stale searches |
+| Autocomplete / live results | `restartable()` | Cancel previous request when new input arrives |
+| Pagination (load next page) | `droppable()` | Ignore scroll events while a page is loading |
+| Pull-to-refresh | `droppable()` | One refresh at a time |
+| Ordered queue (chat send, multi-step) | `sequential()` | Process in strict order, no concurrency |
+
+### Decision rule
+
+Ask: "What should happen if this event fires while the previous one is still being handled?"
+
+- "Ignore it" → `droppable()`
+- "Wait then fire" → debounce or `sequential()`
+- "Cancel the old one, start fresh" → `restartable()`
+- "Doesn't matter, they're independent" → no transformer (default)
 
 ## Cubit structure
 
