@@ -1,6 +1,6 @@
 # SwiftUI Test Writer
 
-Use this guide when adding unit tests or view tests for the SwiftUI boilerplate.
+Use this guide when adding unit tests or view tests for the SwiftUI toolkit.
 
 Testing guidance:
 - Prefer unit tests for stores, services, and business logic.

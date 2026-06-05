@@ -11,4 +11,4 @@ Focus on:
 
 Do not introduce new dependencies unless explicitly approved. Keep navigation centralized in `App/AppRouter.swift` and avoid view-level business logic.
 
-See the `skills/` files for domain-specific conventions, and `agents/swiftui-boilerplate.md` for the full boilerplate rules.
+See the `skills/` files for domain-specific conventions, and `agents/swiftui-architecture.md` for the full guidance rules.

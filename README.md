@@ -14,13 +14,16 @@ Then install any plugin from it:
 
 ```
 /plugin install flutter-toolkit@magnus-plugins
+/plugin install swiftui-toolkit@magnus-plugins
 ```
 
 ## Plugins
 
 | Plugin | Description |
 | --- | --- |
-| [flutter-toolkit](./plugins/flutter-toolkit) | Flutter development workflows — BLoC state management, testing patterns, feature scaffolding. || [swiftui-toolkit](./plugins/swiftui-toolkit) | SwiftUI iOS boilerplate and architecture guidance for modern @Observable apps. |
+| [flutter-toolkit](./plugins/flutter-toolkit) | Flutter development workflows — BLoC state management, testing patterns, feature scaffolding. |
+| [swiftui-toolkit](./plugins/swiftui-toolkit) | SwiftUI iOS boilerplate and architecture guidance for modern @Observable apps. |
+
 ## Repo layout
 
 ```

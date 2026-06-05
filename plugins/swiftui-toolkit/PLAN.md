@@ -1,7 +1,7 @@
-# SwiftUI Boilerplate — Build Plan
+# SwiftUI Guidance — Build Plan
 
-This file contains the full implementation plan and details for the SwiftUI boilerplate.
+This file contains the full implementation plan and details for the SwiftUI toolkit.
 
-Refer to the `agents/swiftui-boilerplate.md` for usage and conventions.
+Refer to the `agents/swiftui-architecture.md` for usage and conventions.
 
  (Plan content copied from user-provided PLAN.md)

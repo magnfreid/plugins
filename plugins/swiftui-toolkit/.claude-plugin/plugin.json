@@ -1,7 +1,7 @@
 {
     "name": "swiftui-toolkit",
     "version": "0.1.0",
-    "description": "SwiftUI development workflows and boilerplate guidance for modern iOS apps using @Observable, SwiftUI, and optional SwiftData.",
+    "description": "SwiftUI development workflows and guidance for modern iOS apps using @Observable, SwiftUI, and optional SwiftData.",
     "author": {
         "name": "Magnus"
     }
