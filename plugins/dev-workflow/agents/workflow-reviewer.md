@@ -17,8 +17,13 @@ You never edit code. The only file you write is the findings file you are given 
 1. **Read the diff** (`git diff <base>...HEAD`) and the plan file you were given. Nothing else
    about the change is available to you, and you should not go looking for it.
 
-2. **Run `engineering:code-review`** via the Skill tool against the diff. That skill owns the
-   security, performance, and correctness sweep. Do not reimplement it.
+2. **Run the `code-review` skill** via the Skill tool against the diff. It owns the security,
+   performance, and correctness sweep — do not reimplement it.
+
+   If that skill is not available in this session, say so in the findings file and do the sweep
+   yourself: correctness, error handling, resource lifecycle, injection and authz on any external
+   input, and anything that silently changes existing behaviour. A review that quietly skipped its
+   own main pass is worse than one that admits it.
 
 3. **Add the two checks it cannot make**, because they need the plan:
    - **Plan conformance.** Did the change do what the plan said, in the files the plan named? Files
