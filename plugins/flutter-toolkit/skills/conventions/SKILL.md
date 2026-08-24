@@ -27,6 +27,24 @@ Departing from a default is fine. Departing silently is not: record it in the pl
   to reduce file size is not a reason to split it.
 - Handlers use `on<Event>` / `emit.forEach`. No `yield*`, no pre-8.x APIs.
 
+## Data classes
+
+- **Freezed by default** for any immutable data class — domain models, DTOs, repository return
+  types, value objects in `packages/<name>/` — not just BLoC state and events. If a class would
+  otherwise need a hand-written `copyWith`, `==`/`hashCode`, or `toString`, make it `@freezed`
+  instead.
+- **Never hand-write `copyWith`, `==`, `hashCode`, or `toString`** for a data class Freezed could
+  generate. Reaching for one by hand is the signal to convert the class, not a reason to keep
+  going.
+- A wire model that only needs `fromJson`/`toJson` can stay plain `@JsonSerializable`. The moment
+  it also needs `copyWith` or value equality, combine `@freezed` with `json_serializable` rather
+  than hand-rolling either.
+- **Opt-outs:** a class that's genuinely mutable in place (not replaced on change) isn't a Freezed
+  candidate — Freezed is for immutable data. Nor is a class with nothing to copy or compare, e.g.
+  a static-method namespace.
+- Same codegen rule applies: any file touched with `@freezed` needs `build_runner` before the
+  change is done.
+
 ## Project layout
 
 - **`lib/`** is UI only — widgets, BLoCs, view glue.
