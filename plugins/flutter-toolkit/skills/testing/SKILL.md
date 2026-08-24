@@ -9,7 +9,7 @@ Conventions for tests in this Flutter stack: `bloc_test` for BLoCs/Cubits, widge
 
 ## What to test
 
-**Tests ship in the same PR as the code they cover.** This reverses an earlier "skip tests unless asked" default. That default was dropped after a feature shipped a crash-on-open to a real device — nothing in the repo mounted a page, so nothing caught it.
+**Doctrine — why tests ship with the code, what a "silent seam" is, and why full coverage is not the goal — lives in `dev-workflow:testing-doctrine`.** Load that skill if it isn't already loaded; it is stack-agnostic and is not repeated here. What follows is that doctrine applied to this stack.
 
 **Required.** A change that adds any of these is not done without tests:
 
@@ -22,7 +22,7 @@ Conventions for tests in this Flutter stack: `bloc_test` for BLoCs/Cubits, widge
 
 **Not required.** Pure layout widgets, and generated code (`*.freezed.dart`, `app_localizations*.dart`).
 
-**Full coverage is explicitly not the goal.** Cover the seams whose breakage is silent, and the paths a user actually walks. Skipping something genuinely churny is fine — say so in the PR's open items rather than writing a test nobody trusts.
+**Full coverage is explicitly not the goal** — see the doctrine skill. Cover the seams whose breakage is silent and the paths a user actually walks; say so in the PR's open items when you skip something churny.
 
 ## Where tests live
 
@@ -127,7 +127,7 @@ Forgetting `named: 'foo'` on a named-arg `any()` silently fails to match. This i
 
 ## Catch-clause ordering
 
-A `_guard`-style wrapper that rethrows a typed failure before a catch-all is order-dependent, and getting the order wrong fails *silently*:
+The Dart instance of the silent-seam class in `dev-workflow:testing-doctrine`. A `_guard`-style wrapper that rethrows a typed failure before a catch-all is order-dependent, and getting the order wrong fails *silently*:
 
 ```dart
 Future<T> _guard<T>(Future<T> Function() op) async {
