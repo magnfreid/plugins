@@ -29,6 +29,43 @@ meaning anything once one is chosen — the chosen option is recorded inside `HA
 A screen redesigned again **overwrites its directory**. Version control holds the previous version;
 a second directory with a suffix does not, it just rots.
 
+## Knowing what still needs building
+
+Once there is more than one handoff, "implement the new designs" needs an answer that does not
+involve opening all of them. Keep a `design/STATUS.md` — one row per screen:
+
+```markdown
+| Screen | Status | Handoff tree | Plan | Shipped |
+|---|---|---|---|---|
+| interview-chat | implemented | 35a8854 | docs/plans/stage-14-interview-redesign.md | PR #27 |
+| login | implemented | eab4948 | docs/plans/stage-15-login-redesign.md | PR #29 |
+```
+
+**Handoff tree is the git tree SHA of `design/<screen>/` as of when that row was last updated** —
+`git ls-tree HEAD design/`, first seven characters.
+
+That column is the whole design, and it is there because of the overwrite rule above. **A redesign
+leaves the folder name unchanged while replacing its contents**, so counting directories, or diffing
+folder names against a list of implemented screens, reports "nothing to do" and misses the redesign
+entirely — which is precisely the case worth catching. A tree SHA changes exactly when a directory's
+contents change, comes free from git, and needs no hand-rolled hashing.
+
+Two placement decisions that matter:
+
+- **The index sits at the top of `design/`, not inside each handoff.** Frontmatter in `HANDOFF.md`,
+  or a per-screen sidecar file, would be wiped by the very overwrite it exists to detect.
+- **Status is maintained by hand; the SHA is checked mechanically.** Whether something is "done" is a
+  judgement. Whether the handoff has changed since is a fact. Keeping them in separate columns is
+  what lets a script catch the two disagreeing.
+
+A checker script belongs next to the project's other scripts and should report at least: a directory
+with no row (**new**), a row whose SHA no longer matches (**changed**), a row not yet implemented
+(**pending**), and a row whose directory is gone (**stale**). Have it exit non-zero when anything
+needs attention so CI can gate on it. Commit a handoff before expecting any of this to track it —
+an uncommitted directory has no tree SHA yet, and the script should say so rather than skip it.
+
+A reference implementation, portable to bash 3.2: `our_legacy`'s `scripts/design-status.sh`.
+
 ## Rules
 
 - **The prototype is reference, never a source to port.** It exists to pin down colour, spacing, and
