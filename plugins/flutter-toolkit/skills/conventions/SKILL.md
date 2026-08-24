@@ -57,6 +57,54 @@ Departing from a default is fine. Departing silently is not: record it in the pl
 - First test for where code goes: if it can be unit-tested without importing Flutter, it belongs in
   a package.
 
+## Feature structure
+
+A feature is `lib/<feature>/`, with `bloc/`, `view/`, `widgets/`, `models/`, `extensions/` as
+needed.
+
+**`view/` holds exactly one file by default: `<feature>_page.dart`.** A second view file only when
+the feature genuinely has a second distinct top-level page.
+
+**The page provides the BLoC; a public `<Feature>View` renders it — both in the same file.** No
+separate `_view.dart`. `View` is public deliberately: it is the seam a widget test injects a
+scripted bloc through without going via the page's own provider.
+
+```dart
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => HomeBloc(),
+      child: const HomeView(),
+    );
+  }
+}
+
+class HomeView extends StatelessWidget {
+  const HomeView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // actual UI here
+  }
+}
+```
+
+**Extraction.** Move a widget to `widgets/` as a public class — even if used once — as soon as it is
+*semantically distinct*: a self-contained piece of UI with its own internal structure. A drawer
+menu, a map control overlay, a settings section, a card with non-trivial content.
+
+Keep a private `_Widget` in the page file only for genuinely small helpers: a styled divider, a
+single row, a thin wrapper. Past ~40–50 lines, or more than a couple of parameters, promote it.
+
+The target is a `<feature>_page.dart` that fits on one screen and reads like a layout outline
+rather than an implementation. If you cannot see the page's composition at a glance, something in
+it wants extracting.
+
+**Features own pages, not routes.** Route definitions stay centralized in `lib/app/router/`.
+
 ## Modularity & interfaces
 
 Build for replaceability. Anything that talks to the outside world — an SDK, a vendor API, a
@@ -141,7 +189,13 @@ builds. It is the only place concrete implementations are named.
 ## Style
 
 - One public class per file. Small private helpers may share the file.
-- Extract a widget as soon as `build` passes ~50 lines. Composition over inheritance.
+- Composition over inheritance for widgets. Extraction thresholds are under **Feature structure**.
+- **Line length 120** — the `dart format` default. Do not set a custom override; disable
+  `lines_longer_than_80_chars` in the lint config rather than reformatting to 80.
+- **Dot shorthands wherever the type is inferable** — `.bold`, not `FontWeight.bold`. Assumes
+  Dart >= 3.10.
+- **`public_member_api_docs` is enabled per package**, not in the root `lib/`. Every public member
+  in `packages/<name>/` carries a `///` doc comment; feature code in `lib/` does not have to.
 - `const` wherever legal.
 - No `late` unless the exact initialization point can be named. Prefer `final` + constructor, or
   nullable with a check.

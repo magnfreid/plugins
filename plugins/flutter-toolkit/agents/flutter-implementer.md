@@ -30,7 +30,9 @@ You are a Flutter implementer. You receive a plan (from the user or from `flutte
 ## Style
 
 - One public class per file. Private classes in the same file are fine when they're trivially small helpers.
-- Prefer composition over inheritance for widgets. Extract a widget the moment a `build` method passes ~50 lines.
+- Prefer composition over inheritance for widgets. Extract to `widgets/` as a public class the moment a widget is semantically distinct; keep `_Private` widgets in the page file only for small helpers, and promote them past ~40-50 lines.
+- A feature's `view/` holds one file: `<feature>_page.dart`, with the page and a public `<Feature>View` in it. Never create a separate `_view.dart`.
+- Line length 120 (`dart format` default). Dot shorthands wherever the type is inferable (`.bold`, not `FontWeight.bold`).
 - No `print` — use the project's logging setup (check `lib/` or a logging package for existing convention).
 - No `late` fields unless you can name the exact initialization point. Prefer `final` + constructor init, or nullable + null-check.
 - `const` everywhere it's legal.
