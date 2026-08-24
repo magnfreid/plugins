@@ -5,9 +5,19 @@
   },
   "plugins": [
     {
+      "name": "dev-workflow",
+      "source": "./plugins/dev-workflow",
+      "description": "End-to-end feature workflow — Opus plans, Sonnet implements, an independent reviewer checks, fixes land, a PR ships."
+    },
+    {
       "name": "flutter-toolkit",
       "source": "./plugins/flutter-toolkit",
-      "description": "Flutter development workflows — BLoC state management, testing patterns, feature scaffolding."
+      "description": "Flutter development workflows — BLoC state management, Dio HTTP clients, testing patterns, routing, feature scaffolding."
+    },
+    {
+      "name": "swiftui-toolkit",
+      "source": "./plugins/swiftui-toolkit",
+      "description": "SwiftUI development workflows — @Observable state, design system tokens, navigation, SwiftData, localization."
     }
   ]
 }
