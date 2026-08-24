@@ -26,6 +26,7 @@ Both enter at step 0 and ask whatever is unclear before any planning happens.
 | `skills/plan-format` | What makes a plan executable by an agent that won't push back |
 | `skills/pr-conventions` | Branch, commit, and PR body structure |
 | `skills/testing-doctrine` | What to test and why — stack-agnostic; the stacks supply the patterns |
+| `skills/design-handoff` | Turning a design tool's output into shipped UI, and what to verify first |
 | `agents/workflow-planner` | Opus. Reads the repo, writes the plan, writes nothing else |
 | `agents/workflow-executor` | Sonnet. Executes the plan faithfully, or applies assigned fixes |
 | `agents/workflow-reviewer` | Reviews the diff with no knowledge of how it was written |
