@@ -65,10 +65,17 @@ Departing from a default is fine. Departing silently is not: record it in the pl
 
 ## Testing
 
-- `bloc_test` for BLoCs and Cubits, widget tests for widgets.
+- `bloc_test` for BLoCs and Cubits, widget tests for pages.
 - **mocktail** for mocks — never mockito. `registerFallbackValue` for non-primitive matchers.
-- A feature is not done until its state machine has tests. Widget tests for anything with
-  conditional rendering.
+- **Tests ship in the same PR as the code they cover.** Required: every new BLoC or Cubit
+  (transitions *and* error paths), every new repository or service public contract including its
+  failure mapping, pure domain logic, and the ordering of catch clauses wherever a `_guard`-style
+  method rethrows a typed exception before a catch-all.
+- One widget test per new page, pumped through the **real page class** rather than its `View` —
+  the page's provider wiring is where lifecycle bugs live and a `View`-level test cannot see them.
+- **Assert against strings resolved from the l10n delegate**, never hardcoded English.
+- Full coverage is not the goal: cover the seams whose breakage is silent and the paths a user
+  actually walks. Details and patterns in `flutter-toolkit:testing`.
 
 ## Tooling
 
