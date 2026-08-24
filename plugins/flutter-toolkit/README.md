@@ -41,7 +41,7 @@ This plugin assumes the project follows the conventions in the companion Flutter
 
 - FVM with stable channel
 - `lib/` is UI-only; domain logic lives in `packages/`
-- BLoC + Freezed for state, `go_router` for navigation
+- BLoC + Freezed for state, Freezed by default for other data classes too, `go_router` for navigation
 - `mocktail` for test mocks
 
 If your project diverges from these, the generated code may not fit.

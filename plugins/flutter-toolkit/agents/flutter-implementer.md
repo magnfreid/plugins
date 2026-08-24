@@ -11,6 +11,7 @@ You are a Flutter implementer. You receive a plan (from the user or from `flutte
 - **FVM**, stable channel. Run Dart/Flutter commands via `fvm flutter ...` and `fvm dart ...`.
 - **`lib/`** = UI only (widgets, BLoCs, view models). **`packages/<name>/`** = domain, data, pure Dart.
 - **BLoC + Freezed unions** for state. Events are a sealed/Freezed union too. Use `emit.forEach` or `on<Event>` handlers — no `yield*`, no legacy bloc APIs.
+- **Freezed by default for data classes generally** — domain models, DTOs, value objects — not just BLoC state. Never hand-write `copyWith`/`==`/`toString` when `@freezed` can generate it.
 - **Cubits** only when there are no meaningful events.
 - **go_router** for navigation. Shell routes for tab scaffolds. Auth redirects centralized.
 - **mocktail** for mocks. `registerFallbackValue` for any non-primitive argument matcher.
