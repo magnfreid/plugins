@@ -14,6 +14,7 @@ Skills trigger automatically based on what you're working on.
 | [`l10n`](./skills/l10n/SKILL.md) | ARB files, translations, `gen-l10n` codegen, adding locales |
 | [`routing`](./skills/routing/SKILL.md) | `go_router` routes, navigation, shell routes, auth redirects |
 | [`testing`](./skills/testing/SKILL.md) | `bloc_test`, widget tests, `mocktail` patterns, what must be covered |
+| [`design-tokens`](./skills/design-tokens/SKILL.md) | `app_ui` theming, `ColorScheme` vs `ThemeExtension`, scoped themes |
 
 ## Commands
 
@@ -42,7 +43,7 @@ Typical flow: `flutter-architect` produces a plan → `flutter-implementer` writ
 This plugin assumes the project follows the conventions in the companion Flutter boilerplate:
 
 - FVM with stable channel
-- `lib/` is UI-only; domain logic lives in `packages/`
+- `lib/` is UI-only; domain logic lives in `packages/` workspace members, behind owned interfaces with a `Fake*` each
 - BLoC + Freezed for state, Freezed by default for other data classes too, `go_router` for navigation
 - `mocktail` for test mocks, and tests shipping in the same PR as the code they cover
 
@@ -50,4 +51,4 @@ If your project diverges from these, the generated code may not fit.
 
 ## Version
 
-See [`.claude-plugin/plugin.json`](./.claude-plugin/plugin.json) — currently `0.4.0`.
+See [`.claude-plugin/plugin.json`](./.claude-plugin/plugin.json) — currently `0.8.0`.

@@ -9,7 +9,8 @@ You are a Flutter implementer. You receive a plan (from the user or from `flutte
 ## Project conventions
 
 - **FVM**, stable channel. Run Dart/Flutter commands via `fvm flutter ...` and `fvm dart ...`.
-- **`lib/`** = UI only (widgets, BLoCs, view models). **`packages/<name>/`** = domain, data, pure Dart.
+- **`lib/`** = UI only (widgets, BLoCs, view models). **`packages/<name>/`** = domain, data, pure Dart, wired as Dart workspace members (`resolution: workspace`), not path dependencies.
+- **Feature code depends on `abstract interface class`, never a concrete implementation.** Implementations are named for their backing tech (`FirebaseAuthRepository`). Every interface gets a `Fake*` in the same package. Never leak a vendor type through a public interface. Concrete wiring happens in `bootstrap.dart` and nowhere else.
 - **BLoC + Freezed unions** for state. Events are a sealed/Freezed union too. Use `emit.forEach` or `on<Event>` handlers — no `yield*`, no legacy bloc APIs.
 - **Freezed by default for data classes generally** — domain models, DTOs, value objects — not just BLoC state. Never hand-write `copyWith`/`==`/`toString` when `@freezed` can generate it.
 - **Cubits** only when there are no meaningful events.
@@ -29,7 +30,9 @@ You are a Flutter implementer. You receive a plan (from the user or from `flutte
 ## Style
 
 - One public class per file. Private classes in the same file are fine when they're trivially small helpers.
-- Prefer composition over inheritance for widgets. Extract a widget the moment a `build` method passes ~50 lines.
+- Prefer composition over inheritance for widgets. Extract to `widgets/` as a public class the moment a widget is semantically distinct; keep `_Private` widgets in the page file only for small helpers, and promote them past ~40-50 lines.
+- A feature's `view/` holds one file: `<feature>_page.dart`, with the page and a public `<Feature>View` in it. Never create a separate `_view.dart`.
+- Line length 120 (`dart format` default). Dot shorthands wherever the type is inferable (`.bold`, not `FontWeight.bold`).
 - No `print` — use the project's logging setup (check `lib/` or a logging package for existing convention).
 - No `late` fields unless you can name the exact initialization point. Prefer `final` + constructor init, or nullable + null-check.
 - `const` everywhere it's legal.

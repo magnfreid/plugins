@@ -51,6 +51,11 @@ a checklist.
 
 Do not ask what you can read. If the repo answers it, read the repo.
 
+If the input is a **design handoff** — a `design/<screen>/` folder, a prototype, a mockup — load
+`dev-workflow:design-handoff` now. It changes what you have to ask about: handoffs regularly assert
+behaviour the app does not have, and smuggle product decisions in as visual ones. Those are step 0
+questions, not something to discover mid-implementation.
+
 Write `brief.md`: the objective, the decisions made in this conversation, and an explicit
 out-of-scope list. Confirm nothing — go straight on to planning.
 
