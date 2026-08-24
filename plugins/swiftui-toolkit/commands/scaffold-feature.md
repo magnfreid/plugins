@@ -1,3 +1,7 @@
+---
+description: Scaffold a new SwiftUI feature folder, register its route on AppRouter, and wire its strings.
+---
+
 # scaffold-feature
 
 Scaffold a new SwiftUI feature using the toolkit conventions.

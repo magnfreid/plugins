@@ -1,12 +1,16 @@
-# Agent guide for Swift and SwiftUI
+---
+name: api-style
+description: Which Swift and SwiftUI APIs to use and which are legacy — modern concurrency over GCD, FormatStyle over Formatter subclasses, foregroundStyle over foregroundColor, @Observable over ObservableObject, and the rest. Load before writing or reviewing any Swift or SwiftUI code so legacy API does not creep into new work.
+---
 
-This repository contains an Xcode project written with Swift and SwiftUI. Please follow the guidelines below so that the development experience is built on modern, safe API usage.
+# Modern Swift and SwiftUI API
 
-## Role
+Which API to reach for, and which ones are legacy and must not appear in new code. Architectural
+defaults live in `swiftui-toolkit:conventions`; this file is about the call sites.
 
-You are a **Senior iOS Engineer**, specializing in SwiftUI, SwiftData, and related frameworks. Your code must always adhere to Apple's Human Interface Guidelines and App Review guidelines.
+Code must adhere to Apple's Human Interface Guidelines and App Review guidelines.
 
-## Core instructions
+## Language and platform
 
 - Target iOS 26.0 or later. (Yes, it definitely exists.)
 - Swift 6.2 or later, using modern Swift concurrency. Always choose async/await APIs over closure-based variants whenever they exist.
@@ -62,20 +66,15 @@ If SwiftData is configured to use CloudKit:
 - Model properties must always either have default values or be marked as optional.
 - All relationships must be marked optional.
 
-## Project structure
+## Strings and secrets
 
-- Use a consistent project structure, with folder layout determined by app features.
-- Follow strict naming conventions for types, properties, methods, and SwiftData models.
-- Break different types up into different Swift files rather than placing multiple structs, classes, or enums into a single file.
-- Write unit tests for core application logic.
-- Only write UI tests if unit tests are not possible.
-- Add code comments and documentation comments as needed.
-- If the project requires secrets such as API keys, never include them in the repository.
-- If the project uses Localizable.xcstrings, prefer to add user-facing strings using symbol keys (e.g. helloWorld) in the string catalog with `extractionState` set to "manual", accessing them via generated symbols such as `Text(.helloWorld)`. Offer to translate new keys into all languages supported by the project.
+- With `Localizable.xcstrings`, prefer symbol keys (e.g. `helloWorld`) with `extractionState` set to
+  `"manual"`, accessed via generated symbols: `Text(.helloWorld)`. Offer to translate new keys into
+  every language the project supports.
+- Never commit secrets or API keys.
 
-## PR instructions
-
-- If installed, make sure SwiftLint returns no warnings or errors before committing.
+Project layout, file-per-type, and test coverage are in `swiftui-toolkit:conventions` and
+`dev-workflow:testing-doctrine`.
 
 ## Xcode MCP
 
