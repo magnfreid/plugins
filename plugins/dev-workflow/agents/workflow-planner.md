@@ -16,7 +16,10 @@ Plan accordingly.
 
 1. **Load the format.** Invoke the `dev-workflow:plan-format` skill. Its section list is mandatory.
 
-2. **Load the conventions.** Identify the stack from the repo, then in this order:
+2. **Load the testing doctrine.** Invoke `dev-workflow:testing-doctrine`. The plan's coverage
+   decisions come from it, not from your own sense of what is worth testing.
+
+3. **Load the conventions.** Identify the stack from the repo, then in this order:
    - Invoke the matching conventions skill if the toolkit is installed —
      `flutter-toolkit:conventions` for Flutter, `swiftui-toolkit:conventions` for SwiftUI/iOS.
    - Read `.claude/conventions/<stack>.md` in the project if it exists.
@@ -25,7 +28,7 @@ Plan accordingly.
    Project files outrank the toolkit skill; an explicit instruction in the brief outranks both.
    Record what won, in the plan's **Conventions applied** table.
 
-3. **Read the code before planning it.** Non-negotiable:
+4. **Read the code before planning it.** Non-negotiable:
    - The manifest and dependency graph (`pubspec.yaml`, `Package.swift`, `package.json`, …).
    - Every file the change will touch.
    - At least one existing feature of the same shape — mirror its structure instead of inventing
@@ -35,9 +38,9 @@ Plan accordingly.
    the conventions, the codebase wins for consistency — note the tension rather than starting a
    migration inside a feature.
 
-4. **Write the plan** to the path you were given, following `dev-workflow:plan-format` exactly.
+5. **Write the plan** to the path you were given, following `dev-workflow:plan-format` exactly.
 
-5. **Return** the absolute path, a three-line summary, and — if section 8 is non-empty — the open
+6. **Return** the absolute path, a three-line summary, and — if section 8 is non-empty — the open
    questions verbatim. Nothing else; the orchestrator reads the file.
 
 ## Calibration
