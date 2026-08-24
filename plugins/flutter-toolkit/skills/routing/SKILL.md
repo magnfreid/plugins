@@ -81,7 +81,9 @@ Constructs the `GoRouter`, wires redirects and shell routes:
 
 ```dart
 // lib/app/router/app_router.dart
-import 'package:flutter/widgets.dart';
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 
 import 'routes.dart';
@@ -106,6 +108,44 @@ class AppRouter {
 ```
 
 `MaterialApp.router` in `app.dart` consumes this via `AppRouter.build(authCubit: ...)`.
+
+### `GoRouterRefreshStream` is not something you import
+
+`go_router` shipped a `GoRouterRefreshStream` and then **removed** it. There is nothing to
+import — write it into the project, next to the router that uses it:
+
+```dart
+/// Bridges a [Stream] to [GoRouter.refreshListenable] so the redirect
+/// re-evaluates on every emission.
+class GoRouterRefreshStream extends ChangeNotifier {
+  GoRouterRefreshStream(Stream<dynamic> stream) {
+    notifyListeners();
+    _sub = stream.asBroadcastStream().listen((_) => notifyListeners());
+  }
+
+  late final StreamSubscription<dynamic> _sub;
+
+  /// `GoRouter.dispose()` disposes its route information provider, which
+  /// *removes* this notifier's listener but never disposes the notifier. So
+  /// [dispose] is never called on it, and cancelling only there would leak the
+  /// subscription. Losing the last listener is the signal to stand down.
+  @override
+  void removeListener(VoidCallback listener) {
+    super.removeListener(listener);
+    if (!hasListeners) _sub.cancel();
+  }
+
+  @override
+  void dispose() {
+    _sub.cancel();
+    super.dispose();
+  }
+}
+```
+
+The `removeListener` override is the part that is easy to get wrong: a version with only
+`dispose()` compiles, works, and quietly leaks one stream subscription per router built — which
+in a widget test suite is one per test.
 
 ## Passing data
 
@@ -151,7 +191,18 @@ Each branch preserves its own navigation stack. Switching tabs doesn't reset the
 
 Always use the router's `redirect` callback. Never gate navigation inside widgets.
 
-`refreshListenable` is critical. Without it the redirect only re-evaluates on navigation events, not on auth state changes — a user who signs out in-app stays on a protected screen until they try to navigate.
+`refreshListenable` is critical. Without it the redirect only re-evaluates on navigation events, not on auth state changes — a user who signs out in-app stays on a protected screen until they try to navigate. `GoRouterRefreshStream` is not importable from `go_router`; see [`app_router.dart`](#gorouterrefreshstream-is-not-something-you-import) for the implementation to paste in.
+
+**Write the redirect as a guard, not a router.** Name the locations each auth state may *not* be at and return `null` for everything else:
+
+```dart
+// Wrong — pins each state to exactly one location. Every route added later is
+// unreachable, and nothing fails until the app has a fourth screen.
+AuthAuthenticated() => location == AppRoutes.home.path ? null : AppRoutes.home.path,
+
+// Right — bounces off the screens that no longer apply, passes the rest.
+AuthAuthenticated() => isSplash || isPublic ? AppRoutes.home.path : null,
+```
 
 ## When to split (scaling beyond centralized)
 
