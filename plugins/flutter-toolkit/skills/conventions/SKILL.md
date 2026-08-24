@@ -47,11 +47,59 @@ Departing from a default is fine. Departing silently is not: record it in the pl
 
 ## Project layout
 
-- **`lib/`** is UI only — widgets, BLoCs, view glue.
-- **`packages/<name>/`** holds domain logic, repositories, data sources, pure Dart. Own
-  `pubspec.yaml`, wired in by path dependency.
-- The test for where code goes: if it can be unit-tested without importing Flutter, it belongs in a
-  package.
+- **`lib/`** is UI only — widgets, BLoCs, view glue. No services, repositories, API clients, or
+  domain logic.
+- **`packages/<name>/`** holds domain logic, repositories, data sources, pure Dart. Each has its
+  own `pubspec.yaml`.
+- Members are wired as a **Dart workspace**, not path dependencies: the root `pubspec.yaml` lists
+  every member explicitly under `workspace:` (globs are not supported) *and* declares each as a
+  dependency; every member sets `resolution: workspace`.
+- First test for where code goes: if it can be unit-tested without importing Flutter, it belongs in
+  a package.
+
+## Modularity & interfaces
+
+Build for replaceability. Anything that talks to the outside world — an SDK, a vendor API, a
+platform service — sits behind an interface the project owns.
+
+- **One package per capability vendor.** Exactly one package may import an SDK that is itself a
+  swappable *capability* — a specific vendor's take on a product decision, where a different vendor
+  is a real alternative (`firebase_auth` → `auth_repository`, an AI SDK → `ai_client`). If a second
+  package needs to import that SDK, the boundary is in the wrong place.
+- **Shared infrastructure is one package per domain, not one package total.** Some SDKs are not a
+  capability choice at all — they are the plumbing everything sits on. A document database is where
+  things are stored, not "our storage vendor, pending a swap." Forcing a single owner across
+  unrelated domains means either merging domains that do not belong together, or inventing a
+  generic wrapper that loses real capabilities the concrete SDK offers — cache-versus-server read
+  semantics, for instance. So each domain that needs it gets its own package
+  (`consent_repository`, `usage_repository`, …), each owning its own document tree and its own
+  slice of the security rules.
+
+  The question is not "how many packages import this SDK." It is **"is this SDK the product
+  decision, or just where we happen to store something."** Getting it wrong in either direction
+  costs: forcing shared infrastructure through one gate produces an unrelated-domain merger or a
+  lossy wrapper; treating a real capability vendor as shared infrastructure puts a second
+  swap-out site where there should be exactly one.
+- **Depend on `abstract interface class`, never a concrete implementation.** Implementations are
+  named for their backing technology — `FirebaseAuthRepository`, `DioOrdersApi`.
+- **Every interface ships a `Fake*` implementation in the same package**, for tests and for UI work
+  that should not need a network or burn quota.
+- **Domain types at the boundary.** Never leak a vendor type — `User`, `DioException`, a vendor's
+  `Schema` — through a public interface. Translate at the edge; failures cross as domain failures.
+- **Express policy as domain concepts, not magic strings.** `AiModelTier.fast` at the call site,
+  not `'vendor-model-3.5-flash'`.
+- **Wire concrete implementations in `bootstrap.dart` only.** Feature code receives interfaces.
+
+**Do not abstract on speculation.** A package earns its existence by having a plausible second
+implementation — a different vendor, or a fake — or, for shared infrastructure, a distinct domain
+that needs its own storage tree and access rules. All of the above is about seams that already
+have a known second case, not indirection for its own sake.
+
+## Bootstrap
+
+`runApp` lives in `bootstrap.dart`. Long-lived repositories and services are constructed there and
+provided above `MaterialApp`, usually via `RepositoryProvider`; `BlocObserver` is wired in debug
+builds. It is the only place concrete implementations are named.
 
 ## Networking
 
