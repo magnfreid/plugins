@@ -10,8 +10,11 @@ history — always wins. Check `git log --oneline -20` before assuming.
 
 ## Branches
 
-`feature/<slug>`, `fix/<slug>`, `refactor/<slug>`, `chore/<slug>` — kebab-case, derived from the
-objective, no ticket numbers unless the repo uses them.
+`feature/<slug>`, `fix/<slug>`, `refactor/<slug>`, `chore/<slug>`, `docs/<slug>`, `test/<slug>` —
+kebab-case, derived from the objective, no ticket numbers unless the repo uses them.
+
+If the repo's history consistently uses a different prefix for the same thing — `feat/` rather than
+`feature/` — match the repo. Consistency inside one history beats consistency across repositories.
 
 Always branch from an up-to-date base. Never commit to the default branch.
 
@@ -53,7 +56,9 @@ Automated review: N blocking, M non-blocking. Full findings in the comment threa
 - [ ] Manual: pagination on a slow connection — not automatable
 
 ## Notes
-Anything a reviewer should know: out-of-scope problems noticed, follow-ups worth filing.
+Anything a reviewer should know: out-of-scope problems noticed, follow-ups worth filing, and
+**any edit no human made** — an SDK migrator, codegen output, a formatter pass, a bulk
+find/replace across platform folders.
 ```
 
 Draft while unreviewed. Ready only once fixes have landed and the body reflects the final state.
@@ -65,3 +70,12 @@ Draft while unreviewed. Ready only once fixes have landed and the body reflects 
   squash merge.
 - Never open a PR from a broken build.
 - The title is the commit convention, not a sentence: `feat(orders): paginate order history`.
+- **Call out anything a reviewer would not predict from the title.** Auto-migrated config,
+  regenerated files, a rename that swept platform folders, a dependency bump that came along for
+  the ride. Surprises in a diff are what make review expensive — a named surprise costs a
+  sentence, an unnamed one costs an hour.
+- **Never force-push a branch under review.** Push follow-up commits instead. Rewriting history
+  under a reviewer invalidates every comment anchored to it and hides what changed between passes.
+- A project's own instruction to "stop after opening the PR" means *do not merge*. It does not
+  forbid the review and fix steps — those happen on the PR, which is exactly where the project
+  wanted them.
