@@ -50,4 +50,4 @@ If your project diverges from these, the generated code may not fit.
 
 ## Version
 
-See [`.claude-plugin/plugin.json`](./.claude-plugin/plugin.json) — currently `0.4.0`.
+See [`.claude-plugin/plugin.json`](./.claude-plugin/plugin.json) — currently `0.5.0`.

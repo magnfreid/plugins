@@ -82,7 +82,13 @@ Departing from a default is fine. Departing silently is not: record it in the pl
 - **FVM**, stable channel. Always `fvm flutter ...` / `fvm dart ...`, never bare `flutter`.
 - Codegen: `fvm dart run build_runner build --delete-conflicting-outputs` after touching any
   Freezed or json_serializable file.
-- Verification order: `build_runner` → `fvm dart analyze` → `fvm flutter test`.
+- Verification order: `build_runner` (only if codegen input changed) → `fvm flutter analyze` →
+  `fvm dart format --set-exit-if-changed lib packages test` → `fvm flutter test` → `fvm flutter
+  test` inside **each** `packages/<member>/` that has a `test/`.
+- **The root test run does not descend into workspace members.** A repo that keeps its domain
+  logic in `packages/` will report green having run a fraction of its suite. Iterate the packages
+  explicitly, or put the whole chain in a `scripts/verify.sh` and run that.
+- The format check is a hard failure, not a nicety — it is the cheapest CI red there is.
 
 ## Style
 

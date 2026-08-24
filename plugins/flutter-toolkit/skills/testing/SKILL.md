@@ -236,14 +236,22 @@ Wrapping the *page* in an outer `BlocProvider.value` does **not** substitute the
 
 ## Running tests
 
-Before pushing:
+Before pushing, in this order:
 
-```
+```bash
 fvm flutter analyze
+fvm dart format --set-exit-if-changed lib packages test
 fvm flutter test
+
+# and then, for every workspace member that has tests:
+for pkg in packages/*/; do
+  [ -d "$pkg/test" ] && (cd "$pkg" && fvm flutter test) || true
+done
 ```
 
-Each workspace package runs its own tests from its own directory. The root `flutter test` does not recurse into `packages/<pkg>/test/` — CI should iterate per package.
+**The root `flutter test` does not recurse into `packages/<pkg>/test/`.** In this layout — domain logic in packages, `lib/` UI-only — that means a root-only run skips most of the suite and prints a green summary anyway. It is the most convincing way to have no test coverage. Run each package from its own directory, or wrap the whole chain in `scripts/verify.sh` and run that.
+
+The format check belongs in the same list: it is enforced in CI and costs nothing to run locally.
 
 ## Anti-patterns (do not do)
 
