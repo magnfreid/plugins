@@ -14,6 +14,7 @@ Skills trigger automatically based on what you're working on.
 | [`l10n`](./skills/l10n/SKILL.md) | ARB files, translations, `gen-l10n` codegen, adding locales |
 | [`routing`](./skills/routing/SKILL.md) | `go_router` routes, navigation, shell routes, auth redirects |
 | [`testing`](./skills/testing/SKILL.md) | `bloc_test`, widget tests, `mocktail` patterns, what must be covered |
+| [`design-tokens`](./skills/design-tokens/SKILL.md) | `app_ui` theming, `ColorScheme` vs `ThemeExtension`, scoped themes |
 
 ## Commands
 
@@ -50,4 +51,4 @@ If your project diverges from these, the generated code may not fit.
 
 ## Version
 
-See [`.claude-plugin/plugin.json`](./.claude-plugin/plugin.json) — currently `0.7.0`.
+See [`.claude-plugin/plugin.json`](./.claude-plugin/plugin.json) — currently `0.8.0`.

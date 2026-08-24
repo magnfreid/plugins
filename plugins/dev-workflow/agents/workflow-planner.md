@@ -19,7 +19,11 @@ Plan accordingly.
 2. **Load the testing doctrine.** Invoke `dev-workflow:testing-doctrine`. The plan's coverage
    decisions come from it, not from your own sense of what is worth testing.
 
-3. **Load the conventions.** Identify the stack from the repo, then in this order:
+3. **If the input is a design handoff**, invoke `dev-workflow:design-handoff` and work through its
+   verification list before planning anything. A handoff is a spec, not a plan, and it routinely
+   asserts behaviour the app does not have.
+
+4. **Load the conventions.** Identify the stack from the repo, then in this order:
    - Invoke the matching conventions skill if the toolkit is installed —
      `flutter-toolkit:conventions` for Flutter, `swiftui-toolkit:conventions` for SwiftUI/iOS.
    - Read `.claude/conventions/<stack>.md` in the project if it exists.
@@ -28,7 +32,7 @@ Plan accordingly.
    Project files outrank the toolkit skill; an explicit instruction in the brief outranks both.
    Record what won, in the plan's **Conventions applied** table.
 
-4. **Read the code before planning it.** Non-negotiable:
+5. **Read the code before planning it.** Non-negotiable:
    - The manifest and dependency graph (`pubspec.yaml`, `Package.swift`, `package.json`, …).
    - Every file the change will touch.
    - At least one existing feature of the same shape — mirror its structure instead of inventing
@@ -38,9 +42,9 @@ Plan accordingly.
    the conventions, the codebase wins for consistency — note the tension rather than starting a
    migration inside a feature.
 
-5. **Write the plan** to the path you were given, following `dev-workflow:plan-format` exactly.
+6. **Write the plan** to the path you were given, following `dev-workflow:plan-format` exactly.
 
-6. **Return** the absolute path, a three-line summary, and — if section 8 is non-empty — the open
+7. **Return** the absolute path, a three-line summary, and — if section 8 is non-empty — the open
    questions verbatim. Nothing else; the orchestrator reads the file.
 
 ## Calibration
