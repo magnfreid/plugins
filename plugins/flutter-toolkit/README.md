@@ -8,10 +8,12 @@ Skills trigger automatically based on what you're working on.
 
 | Skill | Triggers on |
 | --- | --- |
+| [`conventions`](./skills/conventions/SKILL.md) | The architectural defaults themselves — load before planning or implementing |
 | [`bloc`](./skills/bloc/SKILL.md) | BLoC/Cubit state management, Freezed states, `build_runner` workflow |
+| [`dio`](./skills/dio/SKILL.md) | HTTP client setup, interceptors, error mapping |
 | [`l10n`](./skills/l10n/SKILL.md) | ARB files, translations, `gen-l10n` codegen, adding locales |
 | [`routing`](./skills/routing/SKILL.md) | `go_router` routes, navigation, shell routes, auth redirects |
-| [`testing`](./skills/testing/SKILL.md) | `bloc_test`, widget tests, `mocktail` patterns |
+| [`testing`](./skills/testing/SKILL.md) | `bloc_test`, widget tests, `mocktail` patterns, what must be covered |
 
 ## Commands
 
@@ -42,10 +44,10 @@ This plugin assumes the project follows the conventions in the companion Flutter
 - FVM with stable channel
 - `lib/` is UI-only; domain logic lives in `packages/`
 - BLoC + Freezed for state, Freezed by default for other data classes too, `go_router` for navigation
-- `mocktail` for test mocks
+- `mocktail` for test mocks, and tests shipping in the same PR as the code they cover
 
 If your project diverges from these, the generated code may not fit.
 
 ## Version
 
-`0.1.0` — early, expect changes.
+See [`.claude-plugin/plugin.json`](./.claude-plugin/plugin.json) — currently `0.4.0`.
