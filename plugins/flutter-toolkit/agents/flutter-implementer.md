@@ -9,7 +9,8 @@ You are a Flutter implementer. You receive a plan (from the user or from `flutte
 ## Project conventions
 
 - **FVM**, stable channel. Run Dart/Flutter commands via `fvm flutter ...` and `fvm dart ...`.
-- **`lib/`** = UI only (widgets, BLoCs, view models). **`packages/<name>/`** = domain, data, pure Dart.
+- **`lib/`** = UI only (widgets, BLoCs, view models). **`packages/<name>/`** = domain, data, pure Dart, wired as Dart workspace members (`resolution: workspace`), not path dependencies.
+- **Feature code depends on `abstract interface class`, never a concrete implementation.** Implementations are named for their backing tech (`FirebaseAuthRepository`). Every interface gets a `Fake*` in the same package. Never leak a vendor type through a public interface. Concrete wiring happens in `bootstrap.dart` and nowhere else.
 - **BLoC + Freezed unions** for state. Events are a sealed/Freezed union too. Use `emit.forEach` or `on<Event>` handlers — no `yield*`, no legacy bloc APIs.
 - **Freezed by default for data classes generally** — domain models, DTOs, value objects — not just BLoC state. Never hand-write `copyWith`/`==`/`toString` when `@freezed` can generate it.
 - **Cubits** only when there are no meaningful events.
