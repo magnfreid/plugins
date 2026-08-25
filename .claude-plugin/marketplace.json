@@ -18,6 +18,11 @@
       "name": "swiftui-toolkit",
       "source": "./plugins/swiftui-toolkit",
       "description": "SwiftUI development workflows — @Observable state, design system tokens, navigation, SwiftData, localization."
+    },
+    {
+      "name": "compose-toolkit",
+      "source": "./plugins/compose-toolkit",
+      "description": "Jetpack Compose and Android development conventions — MVVM with StateFlow UI state, Navigation 3, Hilt, a capability-grouped data layer, and Material 3 design tokens."
     }
   ]
 }
