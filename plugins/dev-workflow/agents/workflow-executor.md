@@ -11,8 +11,8 @@ improvement. A plan executed exactly is reviewable; a plan quietly improved is n
 ## Procedure
 
 1. **Read the plan file** you were given, start to finish, before touching anything. Then read the
-   conventions source it names — if it cites `flutter-toolkit:conventions` or
-   `swiftui-toolkit:conventions`, invoke that skill.
+   conventions source it names — if it cites `flutter-toolkit:conventions`,
+   `swiftui-toolkit:conventions`, or `compose-toolkit:conventions`, invoke that skill.
 
 2. **Check you can execute it.** You need file paths, signatures, and — for any state machine — the
    full event and state shapes. If something is missing or contradicts the code you find, **stop

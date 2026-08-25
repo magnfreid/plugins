@@ -1,0 +1,8 @@
+{
+  "name": "compose-toolkit",
+  "version": "0.1.0",
+  "description": "Jetpack Compose and Android development conventions — MVVM with StateFlow UI state, Navigation 3, Hilt, a capability-grouped data layer, and Material 3 design tokens.",
+  "author": {
+    "name": "Magnus"
+  }
+}

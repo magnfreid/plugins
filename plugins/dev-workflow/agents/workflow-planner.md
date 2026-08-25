@@ -25,7 +25,8 @@ Plan accordingly.
 
 4. **Load the conventions.** Identify the stack from the repo, then in this order:
    - Invoke the matching conventions skill if the toolkit is installed —
-     `flutter-toolkit:conventions` for Flutter, `swiftui-toolkit:conventions` for SwiftUI/iOS.
+     `flutter-toolkit:conventions` for Flutter, `swiftui-toolkit:conventions` for SwiftUI/iOS,
+     `compose-toolkit:conventions` for Android/Jetpack Compose.
    - Read `.claude/conventions/<stack>.md` in the project if it exists.
    - Read the project's `CLAUDE.md`.
 
