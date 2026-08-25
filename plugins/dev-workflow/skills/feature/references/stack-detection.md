@@ -11,7 +11,7 @@ the path the change targets, and say which you chose in the plan's Objective.
 | `*.xcodeproj`, `*.xcworkspace`, `Package.swift` | `swiftui` | `swiftui-toolkit:conventions` | `xcodebuild -scheme <scheme> build` → `xcodebuild test -scheme <scheme> -destination 'platform=iOS Simulator,name=iPhone 16'` |
 | `package.json` with `react-native` | `react-native` | project only | `npx tsc --noEmit` → lint → `npm test` |
 | `package.json` | `node` / `web` | project only | `npx tsc --noEmit` (if TS) → lint → `npm test` |
-| `build.gradle(.kts)` with Compose | `compose` | project only | `./gradlew lint` → `./gradlew test` |
+| `build.gradle(.kts)` with Compose | `compose` | `compose-toolkit:conventions` | See **Android verification** below |
 | `go.mod` | `go` | project only | `go vet ./...` → `go test ./...` |
 | `Cargo.toml` | `rust` | project only | `cargo clippy` → `cargo test` |
 | `pyproject.toml` / `requirements.txt` | `python` | project only | lint → `pytest` |
@@ -46,6 +46,25 @@ outside those trees is not dragged in.
 If the repo has a script that already does all of this — `scripts/verify.sh`, a Makefile target,
 a CI job — run that instead and skip this list. See the first rule below.
 
+## Android verification
+
+In order, always through the wrapper — **`./gradlew`, never a system `gradle`**:
+
+1. `./gradlew spotlessCheck` / `ktlintCheck` / `detekt` — only if the project configures one.
+2. `./gradlew assembleDebug`
+3. `./gradlew lint` — Android Lint. New warnings introduced by the change count as failures.
+4. `./gradlew testDebugUnitTest`
+5. `./gradlew connectedDebugAndroidTest` — **only if a device or emulator is attached.**
+
+**Step 5 needs a device and step 4 does not.** `testDebugUnitTest` runs on the JVM and will happily
+report green having never touched an emulator, so a run that stops at step 4 has not exercised any
+Compose UI test. Check `adb devices` first; if nothing is attached, run steps 1–4 and *say in the
+report that instrumented tests were not run*. Do not silently skip them, and do not claim the suite
+passed.
+
+Gradle builds are slow, especially the first run in a session or after a dependency change. A long
+run is not a hang — do not kill it and retry with a narrower task.
+
 ## Rules
 
 - **The repo's own scripts win.** If `package.json` defines `test` and `lint`, or the Makefile has
@@ -55,6 +74,8 @@ a CI job — run that instead and skip this list. See the first rule below.
   this repo. Prefer it over everything above.
 - **FVM:** if `.fvmrc` or `.fvm/` exists, every Dart and Flutter command is prefixed `fvm`. Never
   mix `fvm flutter` and bare `flutter` in one run.
+- **Gradle:** always `./gradlew`, never a system `gradle` — the wrapper pins the version the repo
+  expects. Every dependency version belongs in `gradle/libs.versions.toml`.
 - **Xcode:** discover the scheme with `xcodebuild -list` rather than guessing it from the folder
   name. If no simulator destination is available, run the build only and say in the report that
   tests were not run — do not silently skip them.
