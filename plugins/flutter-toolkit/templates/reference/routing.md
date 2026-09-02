@@ -1,9 +1,6 @@
----
-name: routing
-description: Flutter navigation with go_router. Trigger on any routing or navigation work — "add a route", "navigate to X", "go_router", nested routes, shell routes (bottom nav), auth redirects, typed routes, passing data between screens, or deep linking.
----
-
 # routing
+
+*Project reference, seeded from `flutter-toolkit`. This project owns it — edit it here.*
 
 Conventions for navigation in this Flutter stack: `go_router`, declarative routes, the entire navigation tree centralized under `lib/app/router/` so the full structure is visible in one place. Features own their pages; the router owns routes.
 

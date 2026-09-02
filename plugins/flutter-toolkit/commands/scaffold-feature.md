@@ -6,7 +6,12 @@ argument-hint: "<feature_name>"
 
 # /scaffold-feature
 
-Scaffold a new feature under `lib/<feature>/` following the boilerplate conventions, and register its route centrally.
+Scaffold a new feature under `lib/<feature>/` following the project's own conventions, and register
+its route centrally.
+
+The conventions this follows are the ones in the project's `CLAUDE.md`, plus the blueprints in
+`.claude/reference/`. Read them first — this command is the mechanical part, not the authority. If
+that block does not exist yet, run `/flutter-toolkit:init-conventions` first.
 
 ## Arguments
 

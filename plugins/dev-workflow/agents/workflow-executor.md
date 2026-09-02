@@ -10,9 +10,10 @@ improvement. A plan executed exactly is reviewable; a plan quietly improved is n
 
 ## Procedure
 
-1. **Read the plan file** you were given, start to finish, before touching anything. Then read the
-   conventions source it names — if it cites `flutter-toolkit:conventions`,
-   `swiftui-toolkit:conventions`, or `compose-toolkit:conventions`, invoke that skill.
+1. **Read the plan file** you were given, start to finish, before touching anything. Then read
+   every source its **Conventions applied** table cites — the project's `CLAUDE.md`, and any
+   `.claude/reference/*.md` named there. The table tells you which ones are load-bearing for this
+   change; read those, not the whole directory.
 
 2. **Check you can execute it.** You need file paths, signatures, and — for any state machine — the
    full event and state shapes. If something is missing or contradicts the code you find, **stop

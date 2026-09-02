@@ -1,7 +1,7 @@
 {
   "name": "compose-toolkit",
-  "version": "0.1.0",
-  "description": "Jetpack Compose and Android development conventions — MVVM with StateFlow UI state, Navigation 3, Hilt, a capability-grouped data layer, and Material 3 design tokens.",
+  "version": "0.2.0",
+  "description": "Android and Compose conventions as a seeding library \u2014 writes a CLAUDE.md block and architecture notes into your project, read from its real Gradle configuration.",
   "author": {
     "name": "Magnus"
   }

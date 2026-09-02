@@ -1,9 +1,6 @@
----
-name: design-tokens
-description: Flutter theming and design tokens — the app_ui package layout, ColorScheme vs ThemeExtension, adding a token a design introduces, and scoping a redesign to one screen without restyling the app. Trigger on theme work, colours, typography, spacing, "add a token", ThemeExtension, or implementing a design handoff in Flutter.
----
-
 # Design tokens
+
+*Project reference, seeded from `flutter-toolkit`. This project owns it — edit it here.*
 
 Every visual value in the app comes from a token. Feature widgets read the theme; they never carry
 hex literals, magic paddings, or `TextStyle`s built inline.

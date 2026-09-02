@@ -1,26 +1,23 @@
----
-name: api-style
-description: Which Swift and SwiftUI APIs to use and which are legacy — modern concurrency over GCD, FormatStyle over Formatter subclasses, foregroundStyle over foregroundColor, @Observable over ObservableObject, and the rest. Load before writing or reviewing any Swift or SwiftUI code so legacy API does not creep into new work.
----
-
 # Modern Swift and SwiftUI API
 
+*Project reference, seeded from `swiftui-toolkit`. This project owns it — edit it here.*
+
 Which API to reach for, and which ones are legacy and must not appear in new code. Architectural
-defaults live in `swiftui-toolkit:conventions`; this file is about the call sites.
+defaults live in the conventions block in `CLAUDE.md`; this file is about the call sites.
 
 Code must adhere to Apple's Human Interface Guidelines and App Review guidelines.
 
 ## Language and platform
 
-- Target iOS 26.0 or later. (Yes, it definitely exists.)
-- Swift 6.2 or later, using modern Swift concurrency. Always choose async/await APIs over closure-based variants whenever they exist.
+- **The deployment target is whatever this project set** — read it, do not assume one. An API gated above the floor needs `@available`, and "it exists in the latest SDK" is not the question.
+- Modern Swift concurrency throughout. Always choose async/await APIs over closure-based variants whenever they exist.
 - SwiftUI backed up by `@Observable` classes for shared data.
 - Do not introduce third-party frameworks without asking first.
 - Avoid UIKit unless requested.
 
 ## Swift instructions
 
-- `@Observable` classes must be marked `@MainActor` unless the project has Main Actor default actor isolation. Flag any `@Observable` class missing this annotation.
+- `@Observable` classes must be marked `@MainActor` **unless this project sets `SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor`**, in which case the annotation is redundant and should not be added. Check the build setting before flagging anything — this conditional is load-bearing, and dropping it turns a correct rule into a wrong one.
 - All shared data should use `@Observable` classes with `@State` (for ownership) and `@Bindable` / `@Environment` (for passing).
 - Strongly prefer not to use `ObservableObject`, `@Published`, `@StateObject`, `@ObservedObject`, or `@EnvironmentObject` unless they are unavoidable, or if they exist in legacy/integration contexts when changing architecture would be complicated.
 - Assume strict Swift concurrency rules are being applied.
@@ -73,7 +70,7 @@ If SwiftData is configured to use CloudKit:
   every language the project supports.
 - Never commit secrets or API keys.
 
-Project layout, file-per-type, and test coverage are in `swiftui-toolkit:conventions` and
+Project layout, file-per-type, and test coverage are in the conventions block in `CLAUDE.md` and
 `dev-workflow:testing-doctrine`.
 
 ## Xcode MCP

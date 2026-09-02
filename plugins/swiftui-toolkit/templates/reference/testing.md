@@ -1,9 +1,6 @@
----
-name: testing
-description: Testing SwiftUI projects — Swift Testing for stores, services and domain logic, @MainActor rules for @Observable state, protocol-backed fakes, and when a UI test is actually warranted. Trigger on "write a test", "test this store", XCTest, Swift Testing, or when a store, service, or view has been added and needs coverage.
----
-
 # Testing
+
+*Project reference, seeded from `swiftui-toolkit`. This project owns it — edit it here.*
 
 **Doctrine — what to test, why tests ship with the code, and what a "silent seam" is — lives in
 `dev-workflow:testing-doctrine`.** Load it if it is not loaded. This file is the Swift half.

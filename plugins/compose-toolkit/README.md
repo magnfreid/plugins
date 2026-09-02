@@ -1,57 +1,45 @@
 # compose-toolkit
 
-Claude Code plugin for Android development with Jetpack Compose. Encodes opinionated defaults around
-state management, project structure, and testing so Claude produces code that matches how you'd
-actually ship it.
+**A seeding library, not a runtime authority.** Its job is to write good Android and Compose conventions into
+*your project*, then get out of the way.
 
-Deliberately **conventional**: where Google states a recommendation, this toolkit follows it rather
-than inventing a house style. Where Google states nothing — project structure, error mapping,
-what must be tested — this toolkit decides.
-
-## Skills
-
-| Skill | Triggers on |
-| --- | --- |
-| [`conventions`](./skills/conventions/SKILL.md) | The architectural defaults themselves — load before planning or implementing |
-
-Planned: `state`, `composition`, `networking`, `design-tokens`, `testing`, `gradle`, `l10n`,
-`logging`, and the `compose-architect` / `compose-implementer` / `compose-test-writer` /
-`compose-refactor` agents.
-
-## Companion: Google's `android-skills`
-
-This toolkit assumes Google's official skills are installed alongside it:
+## Use it
 
 ```
-/plugin marketplace add android/skills
-/plugin install android-skills@android-skills
+/compose-toolkit:init-conventions
 ```
 
-The two do different jobs and are written not to overlap. `android-skills` targets *"use cases and
-workflows where evaluations show LLMs underperform"* and explicitly excludes basic Compose practice,
-architecture, and project structure — so it answers **how to execute correctly against current
-APIs**. This toolkit answers **which choice we make**.
+That writes a Android and Compose conventions block into the project's own `CLAUDE.md` and copies the long-form
+blueprints into `.claude/reference/`. After that the project owns the text — edit it there.
 
-`conventions` delegates these outright rather than duplicating them:
+## Why it works this way
 
-| Topic | Skill |
-| --- | --- |
-| Navigation 3 mechanics, recipes, nav2 migration | `android-skills:navigation-3` |
-| Test library and harness setup | `android-skills:testing-setup` |
-| AGP 9 upgrades, KSP/KAPT, BuildConfig | `android-skills:agp-9-upgrade` |
-| Edge-to-edge layout | `android-skills:edge-to-edge` |
-| Adaptive layouts, window size classes | `android-skills:adaptive` |
+A skill only applies if it triggers, and triggering is a judgment call made from a `description`
+against whatever you happened to type. That is fine for reference material. It is not fine for a
+rule that must hold every time, and the failure is silent — nothing reports that a convention was
+never consulted.
 
-## Assumptions
+The evidence was a real session that implemented ~3,600 lines across two platforms with **zero**
+skill invocations. The output was mostly fine, but only because the project's own `CLAUDE.md` files
+happened to be thorough. The conventions skills never loaded.
 
-- Single-module app, Kotlin, Jetpack Compose, `compileSdk` current
-- MVVM as Google defines it — one `uiState: StateFlow<XUiState>` per screen, actions as functions
-- Navigation 3, Hilt, Retrofit + kotlinx.serialization, Room + DataStore
-- Material 3 **stable** — not the Expressive alphas
-- Android-only; no Compose Multiplatform
+So the rules moved to where they are always read, and this plugin became the thing that puts them
+there — well-written, and **read from your actual build configuration** rather than asserted. That
+second part matters: a toolkit that confidently states a default the project already decided
+against is worse than no toolkit, because the wrong rule gets followed.
 
-If your project diverges from these, the generated code may not fit.
+The test for anything added here: *if this doesn't load, does something silently go wrong?* If yes,
+it belongs in the seeded block, not in a skill.
 
-## Version
+## What's in here
 
-See [`.claude-plugin/plugin.json`](./.claude-plugin/plugin.json) — currently `0.1.0`.
+| Piece | Role |
+|---|---|
+| `commands/init-conventions` | Seeds the project. The main entry point |
+| `templates/claude-md-block.md` | The rules that go in `CLAUDE.md`, with placeholders read from the project |
+| `templates/reference/` | `architecture-notes` — why `data/` groups by capability, why `designsystem/` and `ui/` stay apart, the growth path out of single-module |
+
+The seeder reads `.github/workflows/*.yml` before writing the verification chain, because CI is the
+most reliable statement of what "passing" means, and it includes a lint task only if the project
+actually configures one. It does **not** assert a networking stack or a persistence choice — that
+is exactly how a toolkit ends up prescribing Retrofit to a project built on something else.

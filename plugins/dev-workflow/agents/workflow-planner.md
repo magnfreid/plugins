@@ -23,15 +23,20 @@ Plan accordingly.
    verification list before planning anything. A handoff is a spec, not a plan, and it routinely
    asserts behaviour the app does not have.
 
-4. **Load the conventions.** Identify the stack from the repo, then in this order:
-   - Invoke the matching conventions skill if the toolkit is installed —
-     `flutter-toolkit:conventions` for Flutter, `swiftui-toolkit:conventions` for SwiftUI/iOS,
-     `compose-toolkit:conventions` for Android/Jetpack Compose.
-   - Read `.claude/conventions/<stack>.md` in the project if it exists.
-   - Read the project's `CLAUDE.md`.
+4. **Load the conventions from the project.** They live in the repo, not in a plugin:
+   - The project's `CLAUDE.md` — including any platform-scoped one (`ios/CLAUDE.md`,
+     `android/CLAUDE.md`). This is the authority.
+   - `.claude/reference/*.md` for the long-form patterns `CLAUDE.md` points at. Read the ones the
+     change actually touches; do not read them all.
 
-   Project files outrank the toolkit skill; an explicit instruction in the brief outranks both.
-   Record what won, in the plan's **Conventions applied** table.
+   An explicit instruction in the brief outranks both. Record what won, in the plan's
+   **Conventions applied** table, citing the file each rule came from.
+
+   **If the project states no conventions at all**, say so in the plan's Objective rather than
+   supplying your own. A convention you invented and recorded as though the project chose it is
+   worse than a gap, because the reviewer will check the code against it. If the repo has a
+   toolkit installed, the fix is `/<toolkit>:init-conventions`, and that is a suggestion for
+   Magnus — not something to run mid-plan.
 
 5. **Read the code before planning it.** Non-negotiable:
    - The manifest and dependency graph (`pubspec.yaml`, `Package.swift`, `package.json`, …).

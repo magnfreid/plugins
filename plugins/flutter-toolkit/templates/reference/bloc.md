@@ -1,9 +1,6 @@
----
-name: bloc
-description: Flutter state management with BLoC/Cubit + Freezed. Trigger on any state or reactive logic in a Flutter app — "add a bloc for X", "write state for this feature", "handle loading/error state", Cubit vs BLoC decisions, BlocProvider/BlocBuilder/BlocListener usage, event transformers (droppable, debounce, restartable, sequential), and the build_runner codegen step after editing Freezed files.
----
-
 # bloc
+
+*Project reference, seeded from `flutter-toolkit`. This project owns it — edit it here.*
 
 Conventions for state management in this Flutter stack: BLoC by default, Cubit for narrow cases, two state-shape patterns depending on the screen, Freezed for equality, codegen via build_runner.
 

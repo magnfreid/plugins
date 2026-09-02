@@ -1,9 +1,6 @@
----
-name: testing
-description: Flutter testing with bloc_test, mocktail, and widget tests. Trigger on any test work — "write a test for", "bloc_test", "widget test", "mock this repo", "test this bloc", "add tests", or when a BLoC / repo / widget has been created or modified and needs coverage.
----
-
 # testing
+
+*Project reference, seeded from `flutter-toolkit`. This project owns it — edit it here.*
 
 Conventions for tests in this Flutter stack: `bloc_test` for BLoCs/Cubits, widget tests for interaction and rendering logic, `mocktail` for mocks (never `mockito`).
 

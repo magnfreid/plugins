@@ -1,9 +1,6 @@
----
-name: design-tokens
-description: SwiftUI theming and reusable styling — semantic colours in Assets.xcassets, Font and Spacing extensions in Core/DesignSystem, ButtonStyle and ViewModifier in Core/Styles, wrapper views in Core/Components. Trigger on theme work, colours, typography, spacing, "add a token", styling a control, or implementing a design handoff in SwiftUI.
----
-
 # Design tokens and styling
+
+*Project reference, seeded from `swiftui-toolkit`. This project owns it — edit it here.*
 
 Every visual value comes from a token. Feature views read tokens; they never carry literal colours,
 point sizes, or magic padding.

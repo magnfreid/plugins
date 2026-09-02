@@ -1,8 +1,8 @@
 {
-    "name": "swiftui-toolkit",
-    "version": "0.3.0",
-    "description": "SwiftUI development workflows and guidance for modern iOS apps using @Observable, SwiftUI, and optional SwiftData.",
-    "author": {
-        "name": "Magnus"
-    }
+  "name": "swiftui-toolkit",
+  "version": "0.9.0",
+  "description": "SwiftUI conventions as a seeding library \u2014 writes a CLAUDE.md block and .claude/reference/ blueprints into your project, read from its real build settings.",
+  "author": {
+    "name": "Magnus"
+  }
 }

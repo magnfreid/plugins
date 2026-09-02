@@ -1,54 +1,46 @@
 # flutter-toolkit
 
-Claude Code plugin for Flutter development. Encodes opinionated defaults around state management, testing, and project structure so Claude produces code that matches how you'd actually ship it.
+**A seeding library, not a runtime authority.** Its job is to write good Flutter conventions into
+*your project*, then get out of the way.
 
-## Skills
+## Use it
 
-Skills trigger automatically based on what you're working on.
+```
+/flutter-toolkit:init-conventions
+```
 
-| Skill | Triggers on |
-| --- | --- |
-| [`conventions`](./skills/conventions/SKILL.md) | The architectural defaults themselves — load before planning or implementing |
-| [`bloc`](./skills/bloc/SKILL.md) | BLoC/Cubit state management, Freezed states, `build_runner` workflow |
-| [`dio`](./skills/dio/SKILL.md) | HTTP client setup, interceptors, error mapping |
-| [`l10n`](./skills/l10n/SKILL.md) | ARB files, translations, `gen-l10n` codegen, adding locales |
-| [`routing`](./skills/routing/SKILL.md) | `go_router` routes, navigation, shell routes, auth redirects |
-| [`testing`](./skills/testing/SKILL.md) | `bloc_test`, widget tests, `mocktail` patterns, what must be covered |
-| [`design-tokens`](./skills/design-tokens/SKILL.md) | `app_ui` theming, `ColorScheme` vs `ThemeExtension`, scoped themes |
+That writes a Flutter conventions block into the project's own `CLAUDE.md` and copies the long-form
+blueprints into `.claude/reference/`. After that the project owns the text — edit it there.
 
-## Commands
+## Why it works this way
 
-Slash commands you invoke explicitly.
+A skill only applies if it triggers, and triggering is a judgment call made from a `description`
+against whatever you happened to type. That is fine for reference material. It is not fine for a
+rule that must hold every time, and the failure is silent — nothing reports that a convention was
+never consulted.
 
-| Command | Purpose |
-| --- | --- |
-| [`/scaffold-feature`](./commands/scaffold-feature.md) | Create `lib/<feature>/{bloc,view,widgets,models}` with starter files and register the route |
-| [`/new-package`](./commands/new-package.md) | Create a workspace package under `packages/<name>/` and wire it into the root pubspec |
+The evidence was a real session that implemented ~3,600 lines across two platforms with **zero**
+skill invocations. The output was mostly fine, but only because the project's own `CLAUDE.md` files
+happened to be thorough. The conventions skills never loaded.
 
-## Agents
+So the rules moved to where they are always read, and this plugin became the thing that puts them
+there — well-written, and **read from your actual build configuration** rather than asserted. That
+second part matters: a toolkit that confidently states a default the project already decided
+against is worse than no toolkit, because the wrong rule gets followed.
 
-Subagents you can delegate to. They run in their own context window with their own model, so the main session stays clean.
+The test for anything added here: *if this doesn't load, does something silently go wrong?* If yes,
+it belongs in the seeded block, not in a skill.
 
-| Agent | Model | Role |
-| --- | --- | --- |
-| [`flutter-architect`](./agents/flutter-architect.md) | Opus | Plans feature architecture and produces a file-by-file blueprint. Read-only. |
-| [`flutter-implementer`](./agents/flutter-implementer.md) | Sonnet | Executes a concrete plan — writes blocs, widgets, packages. |
-| [`flutter-test-writer`](./agents/flutter-test-writer.md) | Haiku | Writes `bloc_test` and widget tests against a class spec. |
-| [`flutter-refactor`](./agents/flutter-refactor.md) | Haiku | Mechanical refactors — rename, extract widget, move files, format. |
+## What's in here
 
-Typical flow: `flutter-architect` produces a plan → `flutter-implementer` writes the code → `flutter-test-writer` adds tests. You can invoke them explicitly (`> use the flutter-architect agent to plan ...`) or let the main agent delegate automatically based on the task.
+| Piece | Role |
+|---|---|
+| `commands/init-conventions` | Seeds the project. The main entry point |
+| `commands/new-package` | Add a workspace package and register it |
+| `commands/scaffold-feature` | Add a feature folder, bloc, view, and route |
+| `templates/claude-md-block.md` | The rules that go in `CLAUDE.md`, with placeholders read from the project |
+| `templates/reference/` | `bloc`, `dio`, `routing`, `l10n`, `design-tokens`, `testing` — copied in only where the project uses them |
 
-## Assumptions
-
-This plugin assumes the project follows the conventions in the companion Flutter boilerplate:
-
-- FVM with stable channel
-- `lib/` is UI-only; domain logic lives in `packages/` workspace members, behind owned interfaces with a `Fake*` each
-- BLoC + Freezed for state, Freezed by default for other data classes too, `go_router` for navigation
-- `mocktail` for test mocks, and tests shipping in the same PR as the code they cover
-
-If your project diverges from these, the generated code may not fit.
-
-## Version
-
-See [`.claude-plugin/plugin.json`](./.claude-plugin/plugin.json) — currently `0.8.1`.
+The seeder reads the root `pubspec.yaml` to find out whether the repo uses a Dart workspace or path
+dependencies, and describes the one it found rather than the one it prefers. It skips blueprints the
+project has no use for — a repo with no HTTP layer should not be carrying 600 lines about Dio.

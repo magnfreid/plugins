@@ -1,9 +1,6 @@
----
-name: dio
-description: Flutter HTTP client setup with Dio — AppHttpClient wrapper, interceptors (auth, retry, logging), error mapping to domain exceptions, per-layer client wiring in bootstrap.dart, and API service consumption patterns. Trigger on "http client", "API call", "network request", "Dio setup", "interceptor", "retry logic", "base URL config", or any networking layer work in a Flutter app.
----
-
 # dio
+
+*Project reference, seeded from `flutter-toolkit`. This project owns it — edit it here.*
 
 Conventions for HTTP networking in this Flutter stack: Dio as the HTTP client, one configured client per API layer, interceptors for cross-cutting concerns, domain exceptions instead of raw `DioException`.
 
