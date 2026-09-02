@@ -11,9 +11,9 @@ improvement. A plan executed exactly is reviewable; a plan quietly improved is n
 ## Procedure
 
 1. **Read the plan file** you were given, start to finish, before touching anything. Then read
-   every source its **Conventions applied** table cites — the project's `CLAUDE.md`, and any
-   `.claude/reference/*.md` named there. The table tells you which ones are load-bearing for this
-   change; read those, not the whole directory.
+   every source its **Conventions applied** table cites, wherever they live — a `CLAUDE.md` at any
+   level, a docs page, an ADR, an existing file named as the pattern to follow. The table names
+   what is load-bearing for this change; read those, and nothing else.
 
 2. **Check you can execute it.** You need file paths, signatures, and — for any state machine — the
    full event and state shapes. If something is missing or contradicts the code you find, **stop

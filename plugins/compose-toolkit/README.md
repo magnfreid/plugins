@@ -12,6 +12,18 @@
 That writes a Android and Compose conventions block into the project's own `CLAUDE.md` and copies the long-form
 blueprints into `.claude/reference/`. After that the project owns the text — edit it there.
 
+## You do not have to run it
+
+`init-conventions` is a shortcut, not a prerequisite. If your project already states its rules —
+a `CLAUDE.md` at the root, another in `android/`, another in `ios/` — then it is already in the
+state this command produces, and `dev-workflow:feature` reads them as they are. Nothing in these
+plugins requires a particular file layout, and nothing will ask you to reorganize a project to
+match one.
+
+Run it when a project has *not* written its rules down yet, and you want a good starting point
+rather than a blank page. After that the project owns the text; re-running is never required, and
+the command refuses to append a second block over one you have edited.
+
 ## Why it works this way
 
 A skill only applies if it triggers, and triggering is a judgment call made from a `description`

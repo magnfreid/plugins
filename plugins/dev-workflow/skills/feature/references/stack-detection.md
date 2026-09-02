@@ -4,9 +4,10 @@ Detect from repo markers, nearest to the working directory first. Record the res
 `state.json` as `stack`. If markers for more than one stack are present (a monorepo), detect per
 the path the change targets, and say which you chose in the plan's Objective.
 
-**Conventions always come from the project** — its `CLAUDE.md` and the `.claude/reference/*.md`
-files that points at — for every stack in this table. There is no per-stack conventions source to
-look up, and no plugin that outranks the repo. What varies by stack is only how you verify.
+**Conventions always come from the project**, in whatever shape it keeps them — a `CLAUDE.md` at
+any level, the docs it points at, or the patterns already in the code. For every stack in this
+table. There is no per-stack conventions source to look up and no plugin that outranks the repo.
+What varies by stack is only how you verify.
 
 | Marker | Stack | Verification, in order |
 |---|---|---|

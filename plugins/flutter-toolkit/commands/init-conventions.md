@@ -12,6 +12,15 @@ After seeding, the project owns the text. It is edited there, never here. There 
 runtime skill holding a second copy: two sources for one rule is how a toolkit default ends up
 silently contradicting a decision the project already made.
 
+## 0. Check whether it is wanted at all
+
+This command is optional. If the project already states its conventions — in a `CLAUDE.md` at the
+root or beside a platform, in a docs directory, in ADRs — then it is already in the state this
+command produces, and the workflow reads them as they are.
+
+Say so and stop, unless the user explicitly wants the block seeded anyway. Overwriting a project's
+own writing with a generated default is the worst outcome available here.
+
 ## 1. Decide where it goes
 
 - A multi-platform repo → the Flutter app's own `CLAUDE.md`.

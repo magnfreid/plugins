@@ -109,6 +109,6 @@ superseded version.
 Where the tokens actually live is the stack's business:
 
 - Flutter — `flutter-toolkit:design-tokens`
-- SwiftUI — the project's `CLAUDE.md`, plus `.claude/reference/design-tokens.md`
+- SwiftUI — the project's `CLAUDE.md`, plus whatever it points at for design tokens
 
 Load the matching one before planning token work.

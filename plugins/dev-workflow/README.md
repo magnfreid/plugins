@@ -86,15 +86,21 @@ between Flutter, SwiftUI, and whatever comes next, so it lives here in `testing-
 repo's own `CLAUDE.md`, because a rule that must hold every time cannot depend on a skill
 triggering. A new stack needs a verification entry in `stack-detection.md` and nothing else.
 
-**Conventions are read from the repo, and cited.** The planner reads the project's `CLAUDE.md` and
-the `.claude/reference/*.md` files it points at, then records every binding choice in the plan's
-*Conventions applied* table with the file it came from. The reviewer checks that table against the
-diff, which is what makes an unhonoured convention a blocking finding rather than a matter of
-taste.
+**Conventions are discovered, not required.** The planner reads whatever the project states, in
+whatever shape it states it: a `CLAUDE.md` at every level covering the change, the docs those point
+at, and — where nothing is written down — the patterns already in the code. It records every
+binding choice in the plan's *Conventions applied* table with the source it came from, and the
+reviewer checks that table against the diff, which is what makes an unhonoured convention a
+blocking finding rather than a matter of taste.
 
-If a project states no conventions, the planner says so rather than inventing some — a convention
-it made up and recorded as though the project chose it is worse than a gap. The toolkits'
-`init-conventions` commands exist to fill that gap deliberately.
+**Nothing here requires a particular layout.** A repo with `CLAUDE.md`, `android/CLAUDE.md` and
+`ios/CLAUDE.md` needs no setup step — the nearest file wins over the root, and the plan says which
+won. The toolkits' `init-conventions` commands are a shortcut for a project that has *not* written
+its rules down yet; they are never a prerequisite, and this workflow will not ask you to reorganize
+a project to suit it.
 
-Precedence, highest first: an instruction in the session → the project's `CLAUDE.md` → its
-`.claude/reference/` files → existing patterns in the repo.
+If a project states nothing, the planner says so rather than inventing some — a convention it made
+up and recorded as though the project chose it is worse than a gap.
+
+Precedence, highest first: an instruction in the session → the nearest applicable `CLAUDE.md` →
+the root `CLAUDE.md` → what those point at → existing patterns in the repo.
