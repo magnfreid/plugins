@@ -1,8 +1,0 @@
-{
-  "name": "swiftui-toolkit",
-  "version": "0.9.0",
-  "description": "Tool-specific SwiftUI skills \u2014 modern API style, design tokens, OSLog, Swift Testing. How to write each, once your CLAUDE.md has decided to.",
-  "author": {
-    "name": "Magnus"
-  }
-}

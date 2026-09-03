@@ -42,8 +42,6 @@ Firebase Data Connect — was a *decision* wearing a technique's clothes. None w
 | `skills/l10n` | Localizing with gen-l10n — ARB files, placeholders, plurals, adding a locale |
 | `skills/design-tokens` | Theming — ColorScheme vs ThemeExtension, adding a token, scoping an override |
 | `skills/testing` | bloc_test, mocktail fakes, pumping a page through its real providers |
-| `commands/new-package` | Add a workspace package and register it |
-| `commands/scaffold-feature` | Add a feature folder, bloc, view, and route |
 
 ## Adding to it
 

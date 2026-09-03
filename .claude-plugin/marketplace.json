@@ -13,16 +13,6 @@
       "name": "flutter-toolkit",
       "source": "./plugins/flutter-toolkit",
       "description": "Tool-specific Flutter skills \u2014 BLoC, Dio, go_router, gen-l10n, theming, testing. How to use each, once your CLAUDE.md has decided to."
-    },
-    {
-      "name": "swiftui-toolkit",
-      "source": "./plugins/swiftui-toolkit",
-      "description": "Tool-specific SwiftUI skills \u2014 modern API style, design tokens, OSLog, Swift Testing. How to write each, once your CLAUDE.md has decided to."
-    },
-    {
-      "name": "compose-toolkit",
-      "source": "./plugins/compose-toolkit",
-      "description": "Tool-specific Android and Compose skills \u2014 ViewModel StateFlow state, Compose correctness, Hilt wiring, testing. How to use each, once your CLAUDE.md has decided to."
     }
   ]
 }

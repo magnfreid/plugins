@@ -1,8 +1,0 @@
-{
-  "name": "compose-toolkit",
-  "version": "0.2.0",
-  "description": "Tool-specific Android and Compose skills \u2014 ViewModel StateFlow state, Compose correctness, Hilt wiring, testing. How to use each, once your CLAUDE.md has decided to.",
-  "author": {
-    "name": "Magnus"
-  }
-}
