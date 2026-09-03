@@ -15,14 +15,12 @@ here, and they win without discussion. Nothing in this file is a reason to restr
 
 ## Packages
 
-```yaml
-dependencies:
-  dio: ^5.0.0
-  dio_smart_retry: ^7.0.0
+`dio`, plus `dio_smart_retry` for retry and `pretty_dio_logger` as a dev dependency.
 
-dev_dependencies:
-  pretty_dio_logger: ^1.4.0
-```
+**Add them with `dart pub add` / `dart pub add --dev` rather than writing a version constraint by
+hand**, and read the resolved versions from `pubspec.lock`. A version pinned in a document is a
+decision that goes stale silently — the project's `pubspec.yaml` is the only honest source, and
+adding a dependency inside a feature workflow needs raising with Magnus first anyway.
 
 `dio_smart_retry` handles retry with backoff out of the box — don't roll a custom retry interceptor. `pretty_dio_logger` is dev-only; never ship it in release builds.
 
@@ -557,10 +555,7 @@ lib/features/user/data/
 
 Mock `Dio` using a custom `HttpClientAdapter` or a package like `http_mock_adapter`:
 
-```yaml
-dev_dependencies:
-  http_mock_adapter: ^0.6.0
-```
+Add it with `dart pub add --dev http_mock_adapter`; do not write a constraint by hand.
 
 ```dart
 import 'package:dio/dio.dart';

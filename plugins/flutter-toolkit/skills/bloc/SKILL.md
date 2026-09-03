@@ -189,12 +189,9 @@ If none of these apply, don't add a transformer. The default concurrent behavior
 2. Any `bloc_transformers`, `event_transformers`, or similarly named files/directories.
 3. Existing BLoCs in the project — see what they already use and import.
 
-If the project has its own transformers, use those. If not, `bloc_concurrency` is the standard package:
-
-```yaml
-dependencies:
-  bloc_concurrency: ^0.2.0
-```
+If the project has its own transformers, use those. If not, `bloc_concurrency` is the standard
+package — add it with `dart pub add bloc_concurrency` rather than writing a constraint by hand, and
+raise it first if this is inside a feature workflow.
 
 ### Wiring transformers
 

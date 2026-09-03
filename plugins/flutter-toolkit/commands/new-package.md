@@ -43,18 +43,23 @@ publish_to: none
 resolution: workspace
 
 environment:
-  sdk: ^3.9.0
-  flutter: ">=3.24.0"
+  sdk: <copy from the root pubspec.yaml>
+  flutter: <copy from the root pubspec.yaml>
 
 dependencies:
   flutter:
     sdk: flutter
 
 dev_dependencies:
-  flutter_lints: ^4.0.0
+  flutter_lints: <match the root, or `dart pub add --dev flutter_lints`>
   flutter_test:
     sdk: flutter
 ```
+
+**Never hardcode the SDK constraint.** Copy it from the root `pubspec.yaml` — a workspace member
+with a different constraint from its root either fails to resolve or silently pins the whole
+workspace lower. The same goes for lint and test package versions: match the root, or let
+`dart pub add` resolve them.
 
 ### `packages/<name>/pubspec.yaml` (pure Dart variant)
 
@@ -66,11 +71,11 @@ publish_to: none
 resolution: workspace
 
 environment:
-  sdk: ^3.9.0
+  sdk: <copy from the root pubspec.yaml>
 
 dev_dependencies:
-  lints: ^4.0.0
-  test: ^1.25.0
+  lints: <match the root, or `dart pub add --dev lints`>
+  test: <match the root, or `dart pub add --dev test`>
 ```
 
 ### `packages/<name>/analysis_options.yaml`
