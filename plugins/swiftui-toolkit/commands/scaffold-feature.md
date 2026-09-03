@@ -18,6 +18,6 @@ Steps:
 5. Add the feature's strings to the project's string catalog. No user-facing literal in a view.
 6. Keep business logic in the store or a service, never in a `body`.
 
-If the project's `CLAUDE.md` has no SwiftUI conventions block yet, run
-`/swiftui-toolkit:init-conventions` first — otherwise this scaffolds against defaults nobody wrote
-down, which is the drift this toolkit exists to prevent.
+If the project's `CLAUDE.md` says nothing about structure or state, ask before scaffolding
+rather than picking for it. Defaults nobody wrote down are the drift this toolkit exists to
+prevent.

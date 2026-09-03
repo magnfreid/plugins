@@ -12,17 +12,17 @@
     {
       "name": "flutter-toolkit",
       "source": "./plugins/flutter-toolkit",
-      "description": "Flutter technique skills \u2014 BLoC, Dio, go_router, gen-l10n, theming, testing \u2014 plus a command that seeds the decisions into your project's own CLAUDE.md."
+      "description": "Tool-specific Flutter skills \u2014 BLoC, Dio, go_router, gen-l10n, theming, testing. How to use each, once your CLAUDE.md has decided to."
     },
     {
       "name": "swiftui-toolkit",
       "source": "./plugins/swiftui-toolkit",
-      "description": "SwiftUI technique skills \u2014 modern API style, design tokens, OSLog, Swift Testing \u2014 plus a command that seeds the decisions into your project's own CLAUDE.md."
+      "description": "Tool-specific SwiftUI skills \u2014 modern API style, design tokens, OSLog, Swift Testing. How to write each, once your CLAUDE.md has decided to."
     },
     {
       "name": "compose-toolkit",
       "source": "./plugins/compose-toolkit",
-      "description": "Android and Compose conventions seeded into your project's own CLAUDE.md, read from its real Gradle configuration, plus the architecture reasoning behind them."
+      "description": "Tool-specific Android and Compose skills \u2014 ViewModel StateFlow state, Compose correctness, Hilt wiring, testing. How to use each, once your CLAUDE.md has decided to."
     }
   ]
 }

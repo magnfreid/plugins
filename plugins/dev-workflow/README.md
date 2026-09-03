@@ -93,11 +93,10 @@ binding choice in the plan's *Conventions applied* table with the source it came
 reviewer checks that table against the diff, which is what makes an unhonoured convention a
 blocking finding rather than a matter of taste.
 
-**Nothing here requires a particular layout.** A repo with `CLAUDE.md`, `android/CLAUDE.md` and
-`ios/CLAUDE.md` needs no setup step — the nearest file wins over the root, and the plan says which
-won. The toolkits' `init-conventions` commands are a shortcut for a project that has *not* written
-its rules down yet; they are never a prerequisite, and this workflow will not ask you to reorganize
-a project to suit it.
+**Nothing here requires a particular layout, and there is no setup step.** A repo with
+`CLAUDE.md`, `android/CLAUDE.md` and `ios/CLAUDE.md` just works — the nearest file wins over the
+root, and the plan says which won. Writing those files is the project owner's job; this workflow
+reads them and will never ask you to reorganize a project to suit it.
 
 If a project states nothing, the planner says so rather than inventing some — a convention it made
 up and recorded as though the project chose it is worse than a gap.

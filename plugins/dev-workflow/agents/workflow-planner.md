@@ -44,9 +44,9 @@ Plan accordingly.
 
    **If the project genuinely states nothing**, say so in the plan's Objective rather than
    supplying your own. A convention you invented and recorded as though the project chose it is
-   worse than a gap, because the reviewer will then check the code against it. You may mention that
-   a toolkit's `init-conventions` would fill the gap; never treat its absence as a problem to fix
-   before planning, and never propose reorganizing a project's docs to suit this workflow.
+   worse than a gap, because the reviewer will then check the code against it. Writing the
+   project's conventions down is the owner's call, not this workflow's — never treat their absence
+   as a problem to fix before planning, and never propose reorganizing a project's docs to suit it.
 
 5. **Read the code before planning it.** Non-negotiable:
    - The manifest and dependency graph (`pubspec.yaml`, `Package.swift`, `package.json`, …).

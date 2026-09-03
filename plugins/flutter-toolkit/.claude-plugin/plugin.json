@@ -1,7 +1,7 @@
 {
   "name": "flutter-toolkit",
   "version": "0.4.0",
-  "description": "Flutter technique skills \u2014 BLoC, Dio, go_router, gen-l10n, theming, testing \u2014 plus a command that seeds the decisions into your project's own CLAUDE.md.",
+  "description": "Tool-specific Flutter skills \u2014 BLoC, Dio, go_router, gen-l10n, theming, testing. How to use each, once your CLAUDE.md has decided to.",
   "author": {
     "name": "Magnus"
   }

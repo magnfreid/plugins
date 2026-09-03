@@ -31,19 +31,20 @@ Then install any plugin from it:
 `dev-workflow` is a **procedure** — multi-step, order matters, and a failure is visible. That is
 what a skill is good at.
 
-The toolkits hold two different things, and split them deliberately:
+The toolkits are **tool-specific technique**. How to write a BLoC, how to order Dio
+interceptors, which SwiftUI API superseded which. They auto-trigger while you work, including
+inside agents `dev-workflow:feature` spawns.
 
-- **Decisions** — which library, which folder tree, which APIs are banned — are seeded into the
-  target project's `CLAUDE.md` by an `init-conventions` command. A rule that must hold every time
-  cannot depend on a skill triggering, because nothing reports that it did not.
-- **Techniques** — how to write a BLoC, how to order Dio interceptors, which SwiftUI API superseded
-  which — stay as **skills**, and auto-trigger while you work. If one fails to load you get
-  competent generic code rather than a silent rule violation, so probabilistic triggering is an
-  acceptable cost here and is not one for a rule.
+They contain **no decisions** — nothing about whether to use a library, where files live, or what
+things are called. Those belong in the project's own `CLAUDE.md`, which is the project owner's
+responsibility and not something these plugins write.
 
-The technique skills deliberately contain **no decisions** — nothing about whether to use a
-library, where files live, or what things are called. That is what stops them contradicting a
-project's own `CLAUDE.md`.
+That split is the design:
+
+| | Lives in | Because |
+|---|---|---|
+| **Decisions** — "use Dio for HTTP", "@Observable over ObservableObject", the folder tree | the project's `CLAUDE.md` | If it doesn't load, something silently goes wrong. A rule that applies 40% of the time is worse than useless |
+| **Techniques** — how to write it once that is decided | skills here | If it doesn't load, you get competent generic code instead of this specific shape. Degraded, not wrong |
 
 The test for which side a new thing belongs on: *if this doesn't load, does something silently go
 wrong?* If yes, it is a decision, and it is not a skill.
@@ -57,11 +58,9 @@ plugins/
   <plugin-name>/
     .claude-plugin/
       plugin.json          # plugin manifest
-    skills/<skill>/SKILL.md      # procedures
-    commands/<cmd>.md            # explicit entry points, incl. init-conventions
+    skills/<skill>/SKILL.md      # procedures, and tool-specific technique
+    commands/<cmd>.md            # explicit entry points
     agents/<agent>.md            # subagents the workflow spawns
-    templates/                   # decisions, seeded into a target project
-      claude-md-block.md
 ```
 
 ## Versioning

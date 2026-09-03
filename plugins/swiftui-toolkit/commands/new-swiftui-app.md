@@ -18,8 +18,10 @@ Steps:
 4. Add `Assets.xcassets` with semantic colour sets, and a `Localizable.xcstrings` string catalog.
    Decide light-only versus light-and-dark **with the user** — a colour set with a dark variant
    nobody wanted is harder to remove later than to skip now.
-5. Run `/swiftui-toolkit:init-conventions`. It writes the conventions into the new project's
-   `CLAUDE.md`, reading the build settings you just created rather than asserting defaults.
+5. Write the project's `CLAUDE.md`. That is where its decisions live — which state approach,
+   which folder tree, which APIs are banned, what the verification chain is. Ask rather than
+   assume: the deployment target, dark-mode support, and whether SwiftData is used are all product
+   decisions, and a rule asserted here becomes one nobody chose.
 
-Step 5 is the one that matters. Everything above it is a folder tree; step 5 is what makes the
-conventions apply on every future change without anyone having to remember them.
+Step 5 is the one that matters. Everything above it is a folder tree; the `CLAUDE.md` is what makes
+the project's decisions apply on every future change without anyone having to remember them.

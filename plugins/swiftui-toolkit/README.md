@@ -1,78 +1,49 @@
 # swiftui-toolkit
 
-**A seeding library, not a runtime authority.** Its job is to write good SwiftUI conventions into
-*your project*, then get out of the way.
+Tool-specific SwiftUI skills. They describe **how** to use something once your project has decided to
+use it — nothing more.
 
 ## Use it
 
-```
-/swiftui-toolkit:init-conventions
-```
+Nothing to set up. Install the plugin and the skills trigger on their own while you work, including
+inside agents spawned by `dev-workflow:feature`.
 
-That writes the project's **decisions** — which libraries, which structure, which rules — into its
-own `CLAUDE.md`. After that the project owns the text; edit it there.
+"format this date" → `api-style`. "style this button" → `design-tokens`.
 
-The technique skills (`api-style`, `design-tokens`, `logging`, `testing`) stay skills and trigger
-on their own while you work — they are not copied anywhere.
+## What it deliberately does not do
 
-## You will mostly not run it
+**It does not decide anything.** Whether to use Dio, whether state is BLoC or something else,
+whether `@Observable` replaces `ObservableObject`, what the folder tree looks like — those are the
+project owner's calls, and they belong in the project's own `CLAUDE.md` where they are read on
+every change.
 
-`init-conventions` is a blank-page tool, not a prerequisite. A project that already states its
-rules is already in the state it produces, and `dev-workflow:feature` reads them as they are —
-whatever file they live in. Nothing here requires a layout, and nothing will ask you to reorganize
-a project to match one.
-
-The one thing it does that copying a template by hand cannot: **resolve rules that are conditional
-on the project's own configuration.** The SwiftUI `@MainActor` rule is the worked example — it is
-the opposite of itself depending on `SWIFT_DEFAULT_ACTOR_ISOLATION`, and the documented way that
-went wrong was a human copying it and dropping the conditional. If nothing in a stack's block is
-conditional, the command is doing nothing a copy-paste would not.
-
-## Why it works this way
-
-A skill only applies if it triggers, and triggering is a judgment call made from a `description`
-against whatever you happened to type. That is fine for reference material. It is not fine for a
-rule that must hold every time, and the failure is silent — nothing reports that a convention was
-never consulted.
-
-The evidence was a real session that implemented ~3,600 lines across two platforms with **zero**
-skill invocations. The output was mostly fine, but only because the project's own `CLAUDE.md` files
-happened to be thorough. The conventions skills never loaded.
-
-So the rules moved to where they are always read, and this plugin became the thing that puts them
-there — well-written, and **read from your actual build configuration** rather than asserted. That
-second part matters: a toolkit that confidently states a default the project already decided
-against is worse than no toolkit, because the wrong rule gets followed.
-
-## The two halves, and why only one of them seeds
+That split is the whole design:
 
 | | Lives in | Because |
 |---|---|---|
 | **Decisions** — which library, which structure, which APIs are banned | the project's `CLAUDE.md` | If it doesn't load, something silently goes wrong. A rule that applies 40% of the time is worse than useless |
 | **Techniques** — how to write it once the decision is made | skills here | If it doesn't load, you get competent generic code instead of this specific shape. Degraded, not wrong |
 
-That asymmetry is the whole design. It is also why the skills here carry **no decisions**: nothing
-about whether to use a library, where its files live, or what things are called. Strip those out
-and there is nothing left for a project's `CLAUDE.md` to contradict, so the two cannot drift.
+Every skill here carries no decisions at all: nothing about whether to use a library, where its
+files live, or what things are called. Strip those out and there is nothing left for a project's
+`CLAUDE.md` to contradict, so the two cannot drift.
 
-Every drift case that motivated this — a skill asserting iOS 26 against a project on 18, dark mode
-against a light-only app, Retrofit against Firebase Data Connect — was a *decision* wearing a
-technique's clothes. None was a technique.
-
-The test for anything added here: *if this doesn't load, does something silently go wrong?* If yes,
-it is a decision and belongs in the seeded block, not in a skill.
+This was learned the hard way. Every drift case that motivated the split — a skill asserting iOS 26
+against a project on 18, dark variants against a light-only app, Retrofit against a project on
+Firebase Data Connect — was a *decision* wearing a technique's clothes. None was a technique.
 
 ## What's in here
 
 | Piece | Role |
 |---|---|
-| `commands/init-conventions` | Seeds the project. The main entry point |
-| `commands/new-swiftui-app` | Scaffold a new app, then seed it |
+| `skills/api-style` | Which Swift and SwiftUI APIs are current and which are superseded |
+| `skills/design-tokens` | Semantic colours, Font and Spacing extensions, ButtonStyle, wrapper views |
+| `skills/logging` | OSLog — categories, privacy annotations, choosing a level |
+| `skills/testing` | Swift Testing — @MainActor rules for @Observable state, protocol-backed fakes |
+| `commands/new-swiftui-app` | Scaffold a new app target and folder skeleton |
 | `commands/scaffold-feature` | Add a feature folder, route, and strings |
-| `templates/claude-md-block.md` | The rules that go in `CLAUDE.md`, with placeholders read from the project |
-| `skills/api-style`, `design-tokens`, `logging`, `testing` | **How** to write it, once the project has chosen the approach. Auto-trigger while you work |
 
-The seeder deliberately does **not** assert a deployment target, a dark-mode policy, or whether
-SwiftData is used. Those are product decisions. It reads `SWIFT_DEFAULT_ACTOR_ISOLATION` before
-writing the `@MainActor` rule, because that rule is the opposite of itself depending on the setting
-— and a copied rule that lost its conditional is a wrong rule in an always-loaded file.
+## Adding to it
+
+The test: *if this doesn't load, does something silently go wrong?* If yes, it is a decision, it
+belongs in a project's `CLAUDE.md`, and it must not go here.
