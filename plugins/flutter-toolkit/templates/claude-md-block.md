@@ -69,7 +69,3 @@ not a nicety — it is the cheapest CI red there is.
 
 {{WORKSPACE_TEST_WARNING}}
 
-### Reference
-
-Longer-form patterns live in `.claude/reference/`. Read the one you need rather than reconstructing
-it: {{REFERENCE_LIST}}

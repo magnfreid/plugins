@@ -1,18 +1,31 @@
-# l10n
+---
+name: l10n
+description: How to work with Flutter's built-in gen-l10n — ARB file structure, placeholders, plurals and selects, adding a locale, wiring the delegate, and regenerating after an edit. Use when adding or changing a user-facing string in a Flutter project that uses gen-l10n.
+---
 
-*Project reference, seeded from `flutter-toolkit`. This project owns it — edit it here.*
+# Localizing with gen-l10n
 
-Conventions for localization in this Flutter stack: Flutter's built-in `gen-l10n` (no `build_runner`, no `intl_utils`), ARB files per locale, English as the default, Swedish as the second supported locale.
+How to add and change strings once a project is localizing through gen-l10n. Which locales a project supports, and which is the default, are its own decisions — read them from its `l10n.yaml` and ARB files rather than assuming.
+
+**Technique, not choice.** This is how to work with Flutter's built-in gen-l10n once the project has decided to
+use it. Whether to use it at all, where the files live, and what things are called are the
+project's decisions — its `CLAUDE.md` and the patterns already in the code win over anything
+here, and they win without discussion. Nothing in this file is a reason to restructure a repo.
+
 
 ## Setup assumptions
 
-The project already has:
+This assumes gen-l10n is already wired. **Read the project's `l10n.yaml` for the real paths,
+template file, and output class** — do not assume the layout below.
+
+Which locales a project supports, and which one is the template, are its decisions. The example
+uses `en` as the template and one translation alongside it; substitute whatever the repo has.
 
 - `flutter_localizations` from SDK + `intl` as dependencies.
-- `l10n.yaml` at project root.
-- ARB files in `lib/l10n/`:
-  - `app_en.arb` — source of truth, must contain every key.
-  - `app_sv.arb` — Swedish translations.
+- `l10n.yaml` at project root — the authority for everything that follows.
+- ARB files, conventionally in `lib/l10n/`:
+  - `app_<template>.arb` — source of truth, must contain every key.
+  - `app_<locale>.arb` — one per additional locale.
 - `MaterialApp` wired with:
   ```dart
   localizationsDelegates: AppLocalizations.localizationsDelegates,

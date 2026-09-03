@@ -9,8 +9,11 @@
 /compose-toolkit:init-conventions
 ```
 
-That writes a Android and Compose conventions block into the project's own `CLAUDE.md` and copies the long-form
-blueprints into `.claude/reference/`. After that the project owns the text — edit it there.
+That writes the project's **decisions** — which libraries, which structure, which rules — into its
+own `CLAUDE.md`. After that the project owns the text; edit it there.
+
+It also copies `architecture-notes.md` into `.claude/reference/` — the reasoning behind the
+structural decisions it just seeded.
 
 ## You do not have to run it
 
@@ -40,8 +43,23 @@ there — well-written, and **read from your actual build configuration** rather
 second part matters: a toolkit that confidently states a default the project already decided
 against is worse than no toolkit, because the wrong rule gets followed.
 
+## The two halves, and why only one of them seeds
+
+| | Lives in | Because |
+|---|---|---|
+| **Decisions** — which library, which structure, which APIs are banned | the project's `CLAUDE.md` | If it doesn't load, something silently goes wrong. A rule that applies 40% of the time is worse than useless |
+| **Techniques** — how to write it once the decision is made | skills here | If it doesn't load, you get competent generic code instead of this specific shape. Degraded, not wrong |
+
+That asymmetry is the whole design. It is also why the skills here carry **no decisions**: nothing
+about whether to use a library, where its files live, or what things are called. Strip those out
+and there is nothing left for a project's `CLAUDE.md` to contradict, so the two cannot drift.
+
+Every drift case that motivated this — a skill asserting iOS 26 against a project on 18, dark mode
+against a light-only app, Retrofit against Firebase Data Connect — was a *decision* wearing a
+technique's clothes. None was a technique.
+
 The test for anything added here: *if this doesn't load, does something silently go wrong?* If yes,
-it belongs in the seeded block, not in a skill.
+it is a decision and belongs in the seeded block, not in a skill.
 
 ## What's in here
 
@@ -49,7 +67,7 @@ it belongs in the seeded block, not in a skill.
 |---|---|
 | `commands/init-conventions` | Seeds the project. The main entry point |
 | `templates/claude-md-block.md` | The rules that go in `CLAUDE.md`, with placeholders read from the project |
-| `templates/reference/` | `architecture-notes` — why `data/` groups by capability, why `designsystem/` and `ui/` stay apart, the growth path out of single-module |
+| `templates/reference/architecture-notes.md` | The reasoning behind the seeded structure, copied into the project |
 
 The seeder reads `.github/workflows/*.yml` before writing the verification chain, because CI is the
 most reliable statement of what "passing" means, and it includes a lint task only if the project

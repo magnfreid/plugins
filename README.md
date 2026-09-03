@@ -31,13 +31,22 @@ Then install any plugin from it:
 `dev-workflow` is a **procedure** — multi-step, order matters, and a failure is visible. That is
 what a skill is good at.
 
-The toolkits are **seeding libraries**. They hold rules, and a rule that must hold every time
-cannot depend on a skill triggering, because nothing reports that it did not. So they write their
-rules into the target project's `CLAUDE.md` and `.claude/reference/`, where they are read on every
-change, and where the project can edit them.
+The toolkits hold two different things, and split them deliberately:
+
+- **Decisions** — which library, which folder tree, which APIs are banned — are seeded into the
+  target project's `CLAUDE.md` by an `init-conventions` command. A rule that must hold every time
+  cannot depend on a skill triggering, because nothing reports that it did not.
+- **Techniques** — how to write a BLoC, how to order Dio interceptors, which SwiftUI API superseded
+  which — stay as **skills**, and auto-trigger while you work. If one fails to load you get
+  competent generic code rather than a silent rule violation, so probabilistic triggering is an
+  acceptable cost here and is not one for a rule.
+
+The technique skills deliberately contain **no decisions** — nothing about whether to use a
+library, where files live, or what things are called. That is what stops them contradicting a
+project's own `CLAUDE.md`.
 
 The test for which side a new thing belongs on: *if this doesn't load, does something silently go
-wrong?* If yes, it is not a skill.
+wrong?* If yes, it is a decision, and it is not a skill.
 
 ## Repo layout
 
@@ -51,9 +60,8 @@ plugins/
     skills/<skill>/SKILL.md      # procedures
     commands/<cmd>.md            # explicit entry points, incl. init-conventions
     agents/<agent>.md            # subagents the workflow spawns
-    templates/                   # seed material written into a target project
+    templates/                   # decisions, seeded into a target project
       claude-md-block.md
-      reference/<topic>.md
 ```
 
 ## Versioning

@@ -1,8 +1,17 @@
-# bloc
+---
+name: bloc
+description: How to write BLoCs and Cubits with Freezed in Flutter — sealed event and state unions, choosing a sealed union vs a status enum for a given screen, event transformers (droppable, debounce, restartable, sequential), BlocProvider/BlocBuilder/BlocListener wiring, and the build_runner step after editing a Freezed file. Use when writing or changing any bloc, cubit, or state class in a Flutter project that uses BLoC.
+---
 
-*Project reference, seeded from `flutter-toolkit`. This project owns it — edit it here.*
+# Writing BLoCs and Cubits
 
-Conventions for state management in this Flutter stack: BLoC by default, Cubit for narrow cases, two state-shape patterns depending on the screen, Freezed for equality, codegen via build_runner.
+How to shape state, events, and handlers once a feature is being built with BLoC or Cubit.
+
+**Technique, not choice.** This is how to work with BLoC and Cubit once the project has decided to
+use it. Whether to use it at all, where the files live, and what things are called are the
+project's decisions — its `CLAUDE.md` and the patterns already in the code win over anything
+here, and they win without discussion. Nothing in this file is a reason to restructure a repo.
+
 
 ## Cubit or BLoC?
 

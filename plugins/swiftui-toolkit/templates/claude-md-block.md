@@ -61,7 +61,3 @@ banned APIs: it catches next year's deprecations too, and it cannot go stale.
 A claim about warnings requires a **clean** build. An incremental build reports nothing for a file
 it did not recompile.{{LINT_LINE}}
 
-### Reference
-
-Longer-form patterns live in `.claude/reference/`. Read the one you need rather than reconstructing
-it: {{REFERENCE_LIST}}

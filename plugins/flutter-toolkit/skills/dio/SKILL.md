@@ -1,8 +1,17 @@
-# dio
+---
+name: dio
+description: How to structure Dio networking in Flutter — a configured client wrapper, interceptor ordering (auth, retry, logging), mapping DioException onto domain exceptions, CancelToken, and consuming it from an API service. Use when writing or changing networking code in a Flutter project that uses Dio.
+---
 
-*Project reference, seeded from `flutter-toolkit`. This project owns it — edit it here.*
+# Structuring Dio HTTP code
 
-Conventions for HTTP networking in this Flutter stack: Dio as the HTTP client, one configured client per API layer, interceptors for cross-cutting concerns, domain exceptions instead of raw `DioException`.
+How to structure HTTP code once a project is building its networking on Dio.
+
+**Technique, not choice.** This is how to work with Dio once the project has decided to
+use it. Whether to use it at all, where the files live, and what things are called are the
+project's decisions — its `CLAUDE.md` and the patterns already in the code win over anything
+here, and they win without discussion. Nothing in this file is a reason to restructure a repo.
+
 
 ## Packages
 

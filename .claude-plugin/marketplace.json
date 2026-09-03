@@ -12,17 +12,17 @@
     {
       "name": "flutter-toolkit",
       "source": "./plugins/flutter-toolkit",
-      "description": "Flutter conventions as a seeding library \u2014 writes a CLAUDE.md block and .claude/reference/ blueprints into your project, read from its real pubspec and tooling."
+      "description": "Flutter technique skills \u2014 BLoC, Dio, go_router, gen-l10n, theming, testing \u2014 plus a command that seeds the decisions into your project's own CLAUDE.md."
     },
     {
       "name": "swiftui-toolkit",
       "source": "./plugins/swiftui-toolkit",
-      "description": "SwiftUI conventions as a seeding library \u2014 writes a CLAUDE.md block and .claude/reference/ blueprints into your project, read from its real build settings."
+      "description": "SwiftUI technique skills \u2014 modern API style, design tokens, OSLog, Swift Testing \u2014 plus a command that seeds the decisions into your project's own CLAUDE.md."
     },
     {
       "name": "compose-toolkit",
       "source": "./plugins/compose-toolkit",
-      "description": "Android and Compose conventions as a seeding library \u2014 writes a CLAUDE.md block and architecture notes into your project, read from its real Gradle configuration."
+      "description": "Android and Compose conventions seeded into your project's own CLAUDE.md, read from its real Gradle configuration, plus the architecture reasoning behind them."
     }
   ]
 }

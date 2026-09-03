@@ -1,9 +1,17 @@
-# Testing
+---
+name: testing
+description: How to write Swift Testing cases — @MainActor rules for @Observable state, protocol-backed fakes, and when a UI test is actually warranted. Use when writing tests for a SwiftUI store, service, or domain type.
+---
 
-*Project reference, seeded from `swiftui-toolkit`. This project owns it — edit it here.*
+# Writing Swift tests
 
-**Doctrine — what to test, why tests ship with the code, and what a "silent seam" is — lives in
-`dev-workflow:testing-doctrine`.** Load it if it is not loaded. This file is the Swift half.
+How to write the tests, once it is settled what needs covering. What to cover and why is
+`dev-workflow:testing-doctrine`.
+
+**Technique, not choice.** This is how to work with Swift Testing once the project has decided to
+use it. Whether to use it at all, where the files live, and what things are called are the
+project's decisions — its `CLAUDE.md` and the patterns already in the code win over anything
+here, and they win without discussion. Nothing in this file is a reason to restructure a repo.
 
 ## Framework
 

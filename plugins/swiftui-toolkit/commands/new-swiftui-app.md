@@ -19,8 +19,7 @@ Steps:
    Decide light-only versus light-and-dark **with the user** — a colour set with a dark variant
    nobody wanted is harder to remove later than to skip now.
 5. Run `/swiftui-toolkit:init-conventions`. It writes the conventions into the new project's
-   `CLAUDE.md` and copies the long-form blueprints into `.claude/reference/`, reading the build
-   settings you just created rather than asserting defaults.
+   `CLAUDE.md`, reading the build settings you just created rather than asserting defaults.
 
 Step 5 is the one that matters. Everything above it is a folder tree; step 5 is what makes the
 conventions apply on every future change without anyone having to remember them.

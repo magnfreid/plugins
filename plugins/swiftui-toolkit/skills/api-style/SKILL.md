@@ -1,11 +1,17 @@
+---
+name: api-style
+description: Which Swift and SwiftUI APIs are current and which are superseded — FormatStyle over Formatter subclasses, foregroundStyle over foregroundColor, the Tab API over tabItem, structured concurrency over GCD, @Observable over ObservableObject. Use when writing or reviewing any Swift or SwiftUI code, so legacy API does not creep into new work.
+---
+
 # Modern Swift and SwiftUI API
 
-*Project reference, seeded from `swiftui-toolkit`. This project owns it — edit it here.*
+Which API to reach for at a call site, and which are superseded. This is about currency — the newer API replaced the older one — not about architecture.
 
-Which API to reach for, and which ones are legacy and must not appear in new code. Architectural
-defaults live in the conventions block in `CLAUDE.md`; this file is about the call sites.
+**Technique, not choice.** This is how to work with current Swift and SwiftUI API once the project has decided to
+use it. Whether to use it at all, where the files live, and what things are called are the
+project's decisions — its `CLAUDE.md` and the patterns already in the code win over anything
+here, and they win without discussion. Nothing in this file is a reason to restructure a repo.
 
-Code must adhere to Apple's Human Interface Guidelines and App Review guidelines.
 
 ## Language and platform
 

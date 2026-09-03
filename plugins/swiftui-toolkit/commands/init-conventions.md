@@ -1,5 +1,5 @@
 ---
-description: Seed this project's CLAUDE.md with a SwiftUI conventions block and copy the long-form blueprints into .claude/reference/, reading the project's real build settings rather than asserting defaults.
+description: Seed this project's CLAUDE.md with a SwiftUI conventions block — which structure, which rules, which APIs are banned — read from its real build settings rather than asserted. The technique skills stay skills and are not copied.
 argument-hint: [path to the iOS project root, if not the repo root]
 ---
 
@@ -46,21 +46,22 @@ than a rule left out.
 | `{{BUILD_COMMAND}}` | Discover the scheme with `xcodebuild -list` — never guess it. Include a clean build variant |
 | `{{TEST_COMMAND}}` | The test target and a destination that actually exists (`xcrun simctl list devices available`) |
 | `{{LINT_LINE}}` | If `.swiftlint.yml` exists: *" SwiftLint must report zero warnings and zero errors before committing."* Otherwise empty |
-| `{{REFERENCE_LIST}}` | The files you copy in step 3, as a comma-separated list of backticked names |
 
 Things the template deliberately does **not** state, because they are project decisions this
 command must not make: the deployment target, whether dark mode is supported, and whether SwiftData
 is used at all. If the project has decided any of these, add a line saying so. If it has not, leave
 it out — an undecided question does not become decided by appearing in `CLAUDE.md`.
 
-## 3. Copy the blueprints
+## 3. Do not copy the technique skills
 
-Copy `${CLAUDE_PLUGIN_ROOT}/templates/reference/*.md` into `.claude/reference/` in the project.
-These are long-form patterns — API style, design tokens, logging, testing — too long for
-`CLAUDE.md` and too specific to reconstruct from memory.
+This toolkit's long-form patterns — `api-style`, `design-tokens`, `logging`, `testing` — are **skills**, and
+they stay skills. They describe how to work with a library once the project has decided to use it,
+which is not a rule that must always hold, so a skill is the right home for them and there is
+nothing to seed.
 
-Skip any file the project would not use, and say which you skipped. Never overwrite an existing
-file without showing the diff first.
+What you are seeding is the decisions: which libraries, which structure, which rules. Those are the
+half that must apply whether or not anything triggered.
+
 
 ## 4. Apply the rule budget
 
@@ -75,6 +76,6 @@ a paragraph every time.
 ## 5. Report
 
 Tell the user: which file was seeded, every placeholder and the value you read for it (with where
-you read it), which reference files landed, and anything you left out because the project had not
+you read it), and anything you left out because the project had not
 decided it. The placeholder values are the part worth checking — they are the ones that would be
 wrong silently.

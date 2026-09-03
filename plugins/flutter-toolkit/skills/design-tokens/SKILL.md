@@ -1,9 +1,20 @@
-# Design tokens
+---
+name: design-tokens
+description: How to work with Flutter theming — ColorScheme versus ThemeExtension, adding a token a design introduces, and scoping a theme override to one screen without restyling the app. Use when changing colours, typography, or spacing, or implementing a design in Flutter.
+---
 
-*Project reference, seeded from `flutter-toolkit`. This project owns it — edit it here.*
+# Flutter theming and design tokens
 
-Every visual value in the app comes from a token. Feature widgets read the theme; they never carry
-hex literals, magic paddings, or `TextStyle`s built inline.
+How to add and consume theme values, once a project has decided where its theme lives.
+
+**Technique, not choice.** This is how to work with a Flutter theme once the project has decided to
+use it. Whether to use it at all, where the files live, and what things are called are the
+project's decisions — its `CLAUDE.md` and the patterns already in the code win over anything
+here, and they win without discussion. Nothing in this file is a reason to restructure a repo.
+
+
+> Paths below (`packages/app_ui`) are the layout this toolkit defaults to. If the project keeps
+> its theme somewhere else, use that — the technique is unchanged.
 
 ## Where tokens live
 

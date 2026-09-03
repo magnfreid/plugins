@@ -9,9 +9,9 @@ argument-hint: "<feature_name>"
 Scaffold a new feature under `lib/<feature>/` following the project's own conventions, and register
 its route centrally.
 
-The conventions this follows are the ones in the project's `CLAUDE.md`, plus the blueprints in
-`.claude/reference/`. Read them first — this command is the mechanical part, not the authority. If
-that block does not exist yet, run `/flutter-toolkit:init-conventions` first.
+The conventions this follows are the ones in the project's `CLAUDE.md`. Read them first — this
+command is the mechanical part, not the authority. The `bloc`, `routing` and `l10n` skills cover
+the how; this covers the wiring.
 
 ## Arguments
 

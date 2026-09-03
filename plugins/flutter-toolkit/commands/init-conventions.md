@@ -1,5 +1,5 @@
 ---
-description: Seed this project's CLAUDE.md with a Flutter conventions block and copy the long-form blueprints into .claude/reference/, reading the project's real pubspec and tooling rather than asserting defaults.
+description: Seed this project's CLAUDE.md with a Flutter conventions block — which libraries, which structure, which rules — read from its real pubspec and tooling rather than asserted. The technique skills stay skills and are not copied.
 argument-hint: [path to the Flutter project root, if not the repo root]
 ---
 
@@ -44,22 +44,22 @@ than a rule left out.
 | `{{FVM_NOTE}}` | Whether `.fvmrc` / `.fvm/` exists. If it does: *"Always `fvm flutter …` / `fvm dart …`, never bare `flutter`."* If not, drop the note and use bare commands in the chain |
 | `{{VERIFY_CHAIN}}` | The real chain, in order: `build_runner` only if the repo has codegen inputs (search for `@freezed` / `@JsonSerializable`), then `analyze`, `format --set-exit-if-changed`, `test`. Prefix with `fvm ` only if FVM is present. If `scripts/verify.sh` exists, use that instead — one command that cannot drift beats four that can |
 | `{{WORKSPACE_TEST_WARNING}}` | Only if the repo has `packages/` with tests: *"The root test run does not descend into workspace members. A repo keeping its domain logic in `packages/` will report green having run a fraction of its suite — iterate the packages explicitly."* Otherwise empty |
-| `{{REFERENCE_LIST}}` | The files you copy in step 3, as a comma-separated list of backticked names |
 
 Things the template deliberately does **not** state, because they are project decisions this
 command must not make: the HTTP client, the backend, and the Dart SDK floor (dot-shorthand syntax
 needs Dart 3.10+ — check `environment:` before recommending it). If the project has decided any of
 these, add a line saying so. If it has not, leave it out.
 
-## 3. Copy the blueprints
+## 3. Do not copy the technique skills
 
-Copy `${CLAUDE_PLUGIN_ROOT}/templates/reference/*.md` into `.claude/reference/` in the project —
-`bloc`, `dio`, `routing`, `l10n`, `design-tokens`, `testing`. These are long-form patterns too long
-for `CLAUDE.md` and too specific to reconstruct from memory.
+This toolkit's long-form patterns — `bloc`, `dio`, `routing`, `l10n`, `design-tokens`, `testing` — are **skills**, and
+they stay skills. They describe how to work with a library once the project has decided to use it,
+which is not a rule that must always hold, so a skill is the right home for them and there is
+nothing to seed.
 
-**Skip what the project does not use.** A repo with no HTTP layer should not carry `dio.md`; a repo
-that is not localized should not carry `l10n.md`. Say which you skipped and why. Never overwrite an
-existing file without showing the diff first.
+What you are seeding is the decisions: which libraries, which structure, which rules. Those are the
+half that must apply whether or not anything triggered.
+
 
 ## 4. Apply the rule budget
 
@@ -73,6 +73,6 @@ argument at once.
 ## 5. Report
 
 Tell the user: which file was seeded, every placeholder and the value you read for it (with where
-you read it), which reference files landed and which you skipped, and anything you left out because
+you read it), and anything you left out because
 the project had not decided it. The placeholder values are the part worth checking — they are the
 ones that would be wrong silently.

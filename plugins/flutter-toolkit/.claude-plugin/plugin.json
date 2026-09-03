@@ -1,7 +1,7 @@
 {
   "name": "flutter-toolkit",
   "version": "0.4.0",
-  "description": "Flutter conventions as a seeding library \u2014 writes a CLAUDE.md block and .claude/reference/ blueprints into your project, read from its real pubspec and tooling.",
+  "description": "Flutter technique skills \u2014 BLoC, Dio, go_router, gen-l10n, theming, testing \u2014 plus a command that seeds the decisions into your project's own CLAUDE.md.",
   "author": {
     "name": "Magnus"
   }
