@@ -15,17 +15,18 @@ own `CLAUDE.md`. After that the project owns the text; edit it there.
 The technique skills (`bloc`, `dio`, `routing`, `l10n`, `design-tokens`, `testing`) stay skills
 and trigger on their own while you work — they are not copied anywhere.
 
-## You do not have to run it
+## You will mostly not run it
 
-`init-conventions` is a shortcut, not a prerequisite. If your project already states its rules —
-a `CLAUDE.md` at the root, another in `android/`, another in `ios/` — then it is already in the
-state this command produces, and `dev-workflow:feature` reads them as they are. Nothing in these
-plugins requires a particular file layout, and nothing will ask you to reorganize a project to
-match one.
+`init-conventions` is a blank-page tool, not a prerequisite. A project that already states its
+rules is already in the state it produces, and `dev-workflow:feature` reads them as they are —
+whatever file they live in. Nothing here requires a layout, and nothing will ask you to reorganize
+a project to match one.
 
-Run it when a project has *not* written its rules down yet, and you want a good starting point
-rather than a blank page. After that the project owns the text; re-running is never required, and
-the command refuses to append a second block over one you have edited.
+The one thing it does that copying a template by hand cannot: **resolve rules that are conditional
+on the project's own configuration.** The SwiftUI `@MainActor` rule is the worked example — it is
+the opposite of itself depending on `SWIFT_DEFAULT_ACTOR_ISOLATION`, and the documented way that
+went wrong was a human copying it and dropping the conditional. If nothing in a stack's block is
+conditional, the command is doing nothing a copy-paste would not.
 
 ## Why it works this way
 
