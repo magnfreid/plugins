@@ -4,17 +4,29 @@ Detect from repo markers, nearest to the working directory first. Record the res
 `state.json` as `stack`. If markers for more than one stack are present (a monorepo), detect per
 the path the change targets, and say which you chose in the plan's Objective.
 
-| Marker | Stack | Conventions source | Verification, in order |
-|---|---|---|---|
-| `pubspec.yaml` | `flutter` | `flutter-toolkit:conventions` | See **Flutter verification** below — the one-line version is wrong in two ways |
-| `pubspec.yaml`, no `flutter:` key | `dart` | `flutter-toolkit:conventions` | `dart analyze` → `dart format --set-exit-if-changed .` → `dart test` |
-| `*.xcodeproj`, `*.xcworkspace`, `Package.swift` | `swiftui` | `swiftui-toolkit:conventions` | `xcodebuild -scheme <scheme> build` → `xcodebuild test -scheme <scheme> -destination 'platform=iOS Simulator,name=iPhone 16'` |
-| `package.json` with `react-native` | `react-native` | project only | `npx tsc --noEmit` → lint → `npm test` |
-| `package.json` | `node` / `web` | project only | `npx tsc --noEmit` (if TS) → lint → `npm test` |
-| `build.gradle(.kts)` with Compose | `compose` | `compose-toolkit:conventions` | See **Android verification** below |
-| `go.mod` | `go` | project only | `go vet ./...` → `go test ./...` |
-| `Cargo.toml` | `rust` | project only | `cargo clippy` → `cargo test` |
-| `pyproject.toml` / `requirements.txt` | `python` | project only | lint → `pytest` |
+**Conventions always come from the project**, in whatever shape it keeps them — a `CLAUDE.md` at
+any level, the docs it points at, or the patterns already in the code. For every stack in this
+table. There is no per-stack conventions source to look up and no plugin that outranks the repo.
+What varies by stack is only how you verify.
+
+| Marker | Stack | Verification, in order |
+|---|---|---|
+| `pubspec.yaml` | `flutter` | See **Flutter verification** below — the one-line version is wrong in two ways |
+| `pubspec.yaml`, no `flutter:` key | `dart` | `dart analyze` → `dart format --set-exit-if-changed .` → `dart test` |
+| `*.xcodeproj`, `*.xcworkspace`, `Package.swift` | `swiftui` | `xcodebuild -scheme <scheme> build` → `xcodebuild test -scheme <scheme> -destination 'platform=iOS Simulator,name=iPhone 16'` |
+| `package.json` with `react-native` | `react-native` | `npx tsc --noEmit` → lint → `npm test` |
+| `package.json` | `node` / `web` | `npx tsc --noEmit` (if TS) → lint → `npm test` |
+| `build.gradle(.kts)` with Compose | `compose` | See **Android verification** below |
+| `go.mod` | `go` | `go vet ./...` → `go test ./...` |
+| `Cargo.toml` | `rust` | `cargo clippy` → `cargo test` |
+| `pyproject.toml` / `requirements.txt` | `python` | lint → `pytest` |
+
+**The project's own chain wins over this table.** Read `.github/workflows/*.yml` first — CI is the
+most reliable statement of what "passing" means here — and prefer a `scripts/verify.sh` or a
+Makefile target if one exists. One command that cannot drift beats four that can.
+
+**Any claim about warnings requires a from-scratch build.** An incremental build reports nothing
+for a file it did not recompile. Incremental is fine for "tests pass"; record which kind you ran.
 
 ## Flutter verification
 
@@ -29,7 +41,7 @@ In order. Two of these steps are routinely left out, and each has shipped a red 
 
 **Step 5 is not optional and not a nicety.** `flutter test` from the root does not descend into
 workspace members. In a repo that keeps its domain logic in `packages/` — which is the layout
-`flutter-toolkit:conventions` prescribes — a root-only run silently skips most of the suite and
+the project's conventions prescribe — a root-only run silently skips most of the suite and
 still prints a green summary. The failure mode is not a missing check; it is a *convincing* one.
 
 ```bash

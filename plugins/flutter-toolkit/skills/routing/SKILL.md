@@ -1,11 +1,20 @@
 ---
 name: routing
-description: Flutter navigation with go_router. Trigger on any routing or navigation work — "add a route", "navigate to X", "go_router", nested routes, shell routes (bottom nav), auth redirects, typed routes, passing data between screens, or deep linking.
+description: How to work with go_router in Flutter — declaring routes, nested and shell routes for tab scaffolds, redirect callbacks for auth, typed routes, passing data between screens, and deep links. Use when adding or changing navigation in a Flutter project that uses go_router.
 ---
 
-# routing
+# Working with go_router
 
-Conventions for navigation in this Flutter stack: `go_router`, declarative routes, the entire navigation tree centralized under `lib/app/router/` so the full structure is visible in one place. Features own their pages; the router owns routes.
+How to declare and drive routes once a project is navigating with go_router.
+
+**Technique, not choice.** This is how to work with go_router once the project has decided to
+use it. Whether to use it at all, where the files live, and what things are called are the
+project's decisions — its `CLAUDE.md` and the patterns already in the code win over anything
+here, and they win without discussion. Nothing in this file is a reason to restructure a repo.
+
+
+> Paths below (`lib/app/router/`) are the layout this toolkit defaults to. If the project
+> centralizes its routes somewhere else, use that — the technique is unchanged.
 
 ## Declarative over imperative
 

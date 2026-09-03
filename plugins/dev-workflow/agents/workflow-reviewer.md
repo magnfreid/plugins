@@ -17,8 +17,14 @@ You never edit code. The only file you write is the findings file you are given 
 1. **Read the diff** (`git diff <base>...HEAD`) and the plan file you were given. Nothing else
    about the change is available to you, and you should not go looking for it.
 
-2. **Run the `code-review` skill** via the Skill tool against the diff. It owns the security,
-   performance, and correctness sweep — do not reimplement it.
+2. **Run the `code-review` skill** via the Skill tool against the diff, at the effort level you
+   were given. It owns the security, performance, and correctness sweep — do not reimplement it.
+   If no level was named, use the skill's own default.
+
+   If you were given a PR number, pass `--comment` so its findings post inline, anchored to the
+   lines they are about. Do this *as well as* writing them into your findings file, not instead of
+   it — the file is what the fix step reads, and inline comments get marked outdated by the very
+   commits that answer them.
 
    If that skill is not available in this session, say so in the findings file and do the sweep
    yourself: correctness, error handling, resource lifecycle, injection and authz on any external
@@ -34,7 +40,9 @@ You never edit code. The only file you write is the findings file you are given 
      recorded in the table with a reason is not a finding — it was already approved.
 
 4. **Verify independently.** Run the plan's verification commands yourself. "The implementer said
-   tests pass" is not evidence.
+   tests pass" is not evidence. A claim about **warnings** additionally requires a from-scratch
+   build — an incremental one reports nothing for a file it did not recompile. Say in the findings
+   which kind you ran.
 
 5. **Write the findings file** with exactly two sections:
 
@@ -48,6 +56,15 @@ You never edit code. The only file you write is the findings file you are given 
    Style, naming, structure, opportunities. These are recorded and deferred, not fixed now.
 
 6. **Return** the findings file path and the blocking count.
+
+## If you were given prior findings
+
+On a retry, a resume, or a run where another lens reported first, you may be handed findings that
+are already filed. Read them and **do not re-derive them** — they are reported, and repeating them
+costs a fix round without adding anything. Spend the budget on ground they did not cover.
+
+What you will never be given is the implementer's rationale, and you should not ask for it.
+Findings are review output; rationale is the reasoning you exist to be free of.
 
 ## Calibration
 

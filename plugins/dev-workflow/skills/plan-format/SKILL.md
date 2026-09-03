@@ -41,7 +41,7 @@ review time, when it is still cheap to correct.
 
 | Choice | Value | Source |
 |---|---|---|
-| State management | BLoC + Freezed unions | flutter-toolkit:conventions |
+| State management | BLoC + Freezed unions | CLAUDE.md |
 | HTTP | Dio via `packages/api_client` | existing code in repo |
 
 If you deliberately depart from a convention, it goes in this table with source `deviation` and a

@@ -1,11 +1,17 @@
 ---
 name: bloc
-description: Flutter state management with BLoC/Cubit + Freezed. Trigger on any state or reactive logic in a Flutter app — "add a bloc for X", "write state for this feature", "handle loading/error state", Cubit vs BLoC decisions, BlocProvider/BlocBuilder/BlocListener usage, event transformers (droppable, debounce, restartable, sequential), and the build_runner codegen step after editing Freezed files.
+description: How to write BLoCs and Cubits with Freezed in Flutter — sealed event and state unions, choosing a sealed union vs a status enum for a given screen, event transformers (droppable, debounce, restartable, sequential), BlocProvider/BlocBuilder/BlocListener wiring, and the build_runner step after editing a Freezed file. Use when writing or changing any bloc, cubit, or state class in a Flutter project that uses BLoC.
 ---
 
-# bloc
+# Writing BLoCs and Cubits
 
-Conventions for state management in this Flutter stack: BLoC by default, Cubit for narrow cases, two state-shape patterns depending on the screen, Freezed for equality, codegen via build_runner.
+How to shape state, events, and handlers once a feature is being built with BLoC or Cubit.
+
+**Technique, not choice.** This is how to work with BLoC and Cubit once the project has decided to
+use it. Whether to use it at all, where the files live, and what things are called are the
+project's decisions — its `CLAUDE.md` and the patterns already in the code win over anything
+here, and they win without discussion. Nothing in this file is a reason to restructure a repo.
+
 
 ## Cubit or BLoC?
 
@@ -183,12 +189,9 @@ If none of these apply, don't add a transformer. The default concurrent behavior
 2. Any `bloc_transformers`, `event_transformers`, or similarly named files/directories.
 3. Existing BLoCs in the project — see what they already use and import.
 
-If the project has its own transformers, use those. If not, `bloc_concurrency` is the standard package:
-
-```yaml
-dependencies:
-  bloc_concurrency: ^0.2.0
-```
+If the project has its own transformers, use those. If not, `bloc_concurrency` is the standard
+package — add it with `dart pub add bloc_concurrency` rather than writing a constraint by hand, and
+raise it first if this is inside a feature workflow.
 
 ### Wiring transformers
 

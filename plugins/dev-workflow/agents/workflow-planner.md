@@ -23,15 +23,30 @@ Plan accordingly.
    verification list before planning anything. A handoff is a spec, not a plan, and it routinely
    asserts behaviour the app does not have.
 
-4. **Load the conventions.** Identify the stack from the repo, then in this order:
-   - Invoke the matching conventions skill if the toolkit is installed —
-     `flutter-toolkit:conventions` for Flutter, `swiftui-toolkit:conventions` for SwiftUI/iOS,
-     `compose-toolkit:conventions` for Android/Jetpack Compose.
-   - Read `.claude/conventions/<stack>.md` in the project if it exists.
-   - Read the project's `CLAUDE.md`.
+4. **Find the conventions the project actually states.** They live in the repo, not in a plugin,
+   and they are in whatever shape this repo chose. Do not expect a particular one, and never
+   require one.
 
-   Project files outrank the toolkit skill; an explicit instruction in the brief outranks both.
-   Record what won, in the plan's **Conventions applied** table.
+   - **`CLAUDE.md`, at every level that covers the files you are changing.** A repo with a root
+     `CLAUDE.md` plus `android/CLAUDE.md` and `ios/CLAUDE.md` states shared rules once and platform
+     rules next to the platform. Read the root **and** the nearest applicable one. **The nearest
+     wins** where they disagree — and when they do, say which won in the table rather than
+     silently picking.
+   - **Whatever those files point at.** A conventions doc, an ADR directory, `docs/architecture/`,
+     `CONTRIBUTING.md`, `.claude/reference/` — follow the pointer. Read what this change touches;
+     do not read the rest.
+   - **The repo's own patterns**, wherever nothing is written down. An existing feature of the same
+     shape states a convention even when no file does.
+
+   An explicit instruction in the brief outranks all of it. Record what won in the plan's
+   **Conventions applied** table, citing the source of each rule — including
+   `existing pattern in <file>` when that is the honest answer.
+
+   **If the project genuinely states nothing**, say so in the plan's Objective rather than
+   supplying your own. A convention you invented and recorded as though the project chose it is
+   worse than a gap, because the reviewer will then check the code against it. Writing the
+   project's conventions down is the owner's call, not this workflow's — never treat their absence
+   as a problem to fix before planning, and never propose reorganizing a project's docs to suit it.
 
 5. **Read the code before planning it.** Non-negotiable:
    - The manifest and dependency graph (`pubspec.yaml`, `Package.swift`, `package.json`, …).

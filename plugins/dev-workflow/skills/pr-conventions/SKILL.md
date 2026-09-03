@@ -32,6 +32,10 @@ Two commits per workflow run, kept separate on purpose:
 1. The implementation.
 2. `fix(<scope>): address review findings` — so the PR history shows what the review changed.
 
+At `--deep-review` there may be more than one of the second kind, one per reviewer. Name the lens rather
+than numbering them — `fix(orders): address failure-mode review findings` — so the history says
+what each round was answering.
+
 Body only when the *why* is not obvious from the diff. No filler, no "as per the plan", no
 generated-by trailers unless the repo already uses them.
 
@@ -51,6 +55,7 @@ Automated review: N blocking, M non-blocking. Full findings in the comment threa
 - Deferred: <one line each, with why>
 
 ## Verification
+Build: clean (from scratch) — or: incremental, no warnings claim made.
 - [x] fvm dart analyze
 - [x] fvm flutter test (48 passed)
 - [ ] Manual: pagination on a slow connection — not automatable
@@ -66,6 +71,9 @@ Draft while unreviewed. Ready only once fixes have landed and the body reflects 
 ## Rules
 
 - Never claim a check passed that you did not run. An unchecked box is fine; a false one is not.
+- **State which build backs the claim.** "No warnings" after an incremental build is not a result —
+  the compiler said nothing about the files it did not recompile. Either build from scratch or say
+  the run was incremental and make no claim about warnings.
 - Deferred findings go in the body, not only in the comment thread — the thread disappears on a
   squash merge.
 - Never open a PR from a broken build.

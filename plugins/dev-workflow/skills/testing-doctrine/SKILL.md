@@ -5,8 +5,14 @@ description: What to test and why, independent of language or framework — test
 
 # Testing doctrine
 
-Stack-agnostic. The *patterns* — `bloc_test`, XCTest, whatever the stack uses — live in that
-stack's testing skill. This is the part that does not change when the language does.
+Stack-agnostic. The *patterns* — `bloc_test`, XCTest, whatever the stack uses — belong to the
+project, wherever it keeps them. This is the part that does not change when the language does.
+
+**The binding half of this belongs in the project's `CLAUDE.md`,** not here. "Tests ship in the
+same PR" is a rule that must hold whether or not anything loaded, and a skill only applies if it
+triggers. This file is the reasoning behind the rule, and the part you consult while deciding what
+a specific change needs. **Where the project says something different, the project wins** — that
+holds however its rules got there, hand-written or seeded.
 
 ## Tests ship in the same PR as the code they cover
 

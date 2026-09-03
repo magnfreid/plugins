@@ -1,7 +1,7 @@
 {
   "name": "flutter-toolkit",
-  "version": "0.8.1",
-  "description": "Flutter development workflows — BLoC state management, Dio HTTP clients, testing patterns, routing, feature scaffolding.",
+  "version": "0.5.0",
+  "description": "Tool-specific Flutter skills \u2014 BLoC, Dio, go_router, gen-l10n, theming, testing. How to use each, once your CLAUDE.md has decided to.",
   "author": {
     "name": "Magnus"
   }

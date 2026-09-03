@@ -1,7 +1,7 @@
 {
   "name": "dev-workflow",
-  "version": "0.6.1",
-  "description": "Plan with Opus, implement with Sonnet, review blind, fix, ship a PR — one workflow, one approval gate, stack-agnostic.",
+  "version": "0.7.0",
+  "description": "Plan with Opus, implement with Sonnet, review blind, fix, ship a PR — one workflow, one approval gate, stack-agnostic. Add --deep-review to swap in a deeper, non-overlapping second lens.",
   "author": {
     "name": "Magnus"
   }

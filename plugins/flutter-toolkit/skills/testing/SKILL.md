@@ -1,11 +1,17 @@
 ---
 name: testing
-description: Flutter testing with bloc_test, mocktail, and widget tests. Trigger on any test work — "write a test for", "bloc_test", "widget test", "mock this repo", "test this bloc", "add tests", or when a BLoC / repo / widget has been created or modified and needs coverage.
+description: How to write Flutter tests — bloc_test for BLoCs and Cubits, fakes with mocktail, pumping a widget through its real providers, and asserting against resolved localized strings. Use when writing tests for a Flutter bloc, cubit, repository, or screen.
 ---
 
-# testing
+# Writing Flutter tests
 
-Conventions for tests in this Flutter stack: `bloc_test` for BLoCs/Cubits, widget tests for interaction and rendering logic, `mocktail` for mocks (never `mockito`).
+How to write the tests, once it is settled what needs covering. What to cover and why is `dev-workflow:testing-doctrine`; which libraries a project uses are its own call.
+
+**Technique, not choice.** This is how to work with the Flutter test stack once the project has decided to
+use it. Whether to use it at all, where the files live, and what things are called are the
+project's decisions — its `CLAUDE.md` and the patterns already in the code win over anything
+here, and they win without discussion. Nothing in this file is a reason to restructure a repo.
+
 
 ## What to test
 

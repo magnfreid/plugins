@@ -1,54 +1,49 @@
 # flutter-toolkit
 
-Claude Code plugin for Flutter development. Encodes opinionated defaults around state management, testing, and project structure so Claude produces code that matches how you'd actually ship it.
+Tool-specific Flutter skills. They describe **how** to use something once your project has decided to
+use it — nothing more.
 
-## Skills
+## Use it
 
-Skills trigger automatically based on what you're working on.
+Nothing to set up. Install the plugin and the skills trigger on their own while you work, including
+inside agents spawned by `dev-workflow:feature`.
 
-| Skill | Triggers on |
-| --- | --- |
-| [`conventions`](./skills/conventions/SKILL.md) | The architectural defaults themselves — load before planning or implementing |
-| [`bloc`](./skills/bloc/SKILL.md) | BLoC/Cubit state management, Freezed states, `build_runner` workflow |
-| [`dio`](./skills/dio/SKILL.md) | HTTP client setup, interceptors, error mapping |
-| [`l10n`](./skills/l10n/SKILL.md) | ARB files, translations, `gen-l10n` codegen, adding locales |
-| [`routing`](./skills/routing/SKILL.md) | `go_router` routes, navigation, shell routes, auth redirects |
-| [`testing`](./skills/testing/SKILL.md) | `bloc_test`, widget tests, `mocktail` patterns, what must be covered |
-| [`design-tokens`](./skills/design-tokens/SKILL.md) | `app_ui` theming, `ColorScheme` vs `ThemeExtension`, scoped themes |
+"add a bloc for the cart screen" → the `bloc` skill. "wire the orders API" → `dio`.
 
-## Commands
+## What it deliberately does not do
 
-Slash commands you invoke explicitly.
+**It does not decide anything.** Whether to use Dio, whether state is BLoC or something else,
+whether `@Observable` replaces `ObservableObject`, what the folder tree looks like — those are the
+project owner's calls, and they belong in the project's own `CLAUDE.md` where they are read on
+every change.
 
-| Command | Purpose |
-| --- | --- |
-| [`/scaffold-feature`](./commands/scaffold-feature.md) | Create `lib/<feature>/{bloc,view,widgets,models}` with starter files and register the route |
-| [`/new-package`](./commands/new-package.md) | Create a workspace package under `packages/<name>/` and wire it into the root pubspec |
+That split is the whole design:
 
-## Agents
+| | Lives in | Because |
+|---|---|---|
+| **Decisions** — which library, which structure, which APIs are banned | the project's `CLAUDE.md` | If it doesn't load, something silently goes wrong. A rule that applies 40% of the time is worse than useless |
+| **Techniques** — how to write it once the decision is made | skills here | If it doesn't load, you get competent generic code instead of this specific shape. Degraded, not wrong |
 
-Subagents you can delegate to. They run in their own context window with their own model, so the main session stays clean.
+Every skill here carries no decisions at all: nothing about whether to use a library, where its
+files live, or what things are called. Strip those out and there is nothing left for a project's
+`CLAUDE.md` to contradict, so the two cannot drift.
 
-| Agent | Model | Role |
-| --- | --- | --- |
-| [`flutter-architect`](./agents/flutter-architect.md) | Opus | Plans feature architecture and produces a file-by-file blueprint. Read-only. |
-| [`flutter-implementer`](./agents/flutter-implementer.md) | Sonnet | Executes a concrete plan — writes blocs, widgets, packages. |
-| [`flutter-test-writer`](./agents/flutter-test-writer.md) | Haiku | Writes `bloc_test` and widget tests against a class spec. |
-| [`flutter-refactor`](./agents/flutter-refactor.md) | Haiku | Mechanical refactors — rename, extract widget, move files, format. |
+This was learned the hard way. Every drift case that motivated the split — a skill asserting iOS 26
+against a project on 18, dark variants against a light-only app, Retrofit against a project on
+Firebase Data Connect — was a *decision* wearing a technique's clothes. None was a technique.
 
-Typical flow: `flutter-architect` produces a plan → `flutter-implementer` writes the code → `flutter-test-writer` adds tests. You can invoke them explicitly (`> use the flutter-architect agent to plan ...`) or let the main agent delegate automatically based on the task.
+## What's in here
 
-## Assumptions
+| Piece | Role |
+|---|---|
+| `skills/bloc` | Writing BLoCs and Cubits with Freezed — state shape, event transformers, codegen |
+| `skills/dio` | Structuring Dio networking — client wrapper, interceptor order, domain exceptions |
+| `skills/routing` | Working with go_router — nested and shell routes, redirects, typed routes |
+| `skills/l10n` | Localizing with gen-l10n — ARB files, placeholders, plurals, adding a locale |
+| `skills/design-tokens` | Theming — ColorScheme vs ThemeExtension, adding a token, scoping an override |
+| `skills/testing` | bloc_test, mocktail fakes, pumping a page through its real providers |
 
-This plugin assumes the project follows the conventions in the companion Flutter boilerplate:
+## Adding to it
 
-- FVM with stable channel
-- `lib/` is UI-only; domain logic lives in `packages/` workspace members, behind owned interfaces with a `Fake*` each
-- BLoC + Freezed for state, Freezed by default for other data classes too, `go_router` for navigation
-- `mocktail` for test mocks, and tests shipping in the same PR as the code they cover
-
-If your project diverges from these, the generated code may not fit.
-
-## Version
-
-See [`.claude-plugin/plugin.json`](./.claude-plugin/plugin.json) — currently `0.8.1`.
+The test: *if this doesn't load, does something silently go wrong?* If yes, it is a decision, it
+belongs in a project's `CLAUDE.md`, and it must not go here.

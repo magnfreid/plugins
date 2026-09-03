@@ -7,22 +7,12 @@
     {
       "name": "dev-workflow",
       "source": "./plugins/dev-workflow",
-      "description": "End-to-end feature workflow — Opus plans, Sonnet implements, an independent reviewer checks, fixes land, a PR ships."
+      "description": "End-to-end feature workflow \u2014 Opus plans, Sonnet implements, an independent reviewer checks, fixes land, a PR ships. Add --deep-review for a second, non-overlapping lens."
     },
     {
       "name": "flutter-toolkit",
       "source": "./plugins/flutter-toolkit",
-      "description": "Flutter development workflows — BLoC state management, Dio HTTP clients, testing patterns, routing, feature scaffolding."
-    },
-    {
-      "name": "swiftui-toolkit",
-      "source": "./plugins/swiftui-toolkit",
-      "description": "SwiftUI development workflows — @Observable state, design system tokens, navigation, SwiftData, localization."
-    },
-    {
-      "name": "compose-toolkit",
-      "source": "./plugins/compose-toolkit",
-      "description": "Jetpack Compose and Android development conventions — MVVM with StateFlow UI state, Navigation 3, Hilt, a capability-grouped data layer, and Material 3 design tokens."
+      "description": "Tool-specific Flutter skills \u2014 BLoC, Dio, go_router, gen-l10n, theming, testing. How to use each, once your CLAUDE.md has decided to."
     }
   ]
 }
