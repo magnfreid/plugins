@@ -168,7 +168,9 @@ file:
   none, nothing extra runs. This is what makes a project's review table load-bearing instead of
   decorative, and it keeps project-specific policy out of this skill.
 
-**Posting the findings.** Two forms, and they are not redundant:
+**Posting the findings.** Everything posted here is read by a human — write it in the voice from
+`dev-workflow:pr-conventions`: short, plain language, aimed at a junior developer with none of the
+context. Two forms, and they are not redundant:
 
 - **Inline, on the line.** `workflow-reviewer` passes `--comment` to the `code-review` skill, which
   anchors each of its findings to the line it is about. This is the form worth reading — a finding
@@ -182,8 +184,8 @@ Lenses other than `workflow-reviewer` post the summary form only — their findi
 in the text, which is navigable, and hand-assembling review payloads for them would add a fragile
 step to the one part of this workflow that must not fail quietly.
 
-Whatever is still open at the end goes in the **PR body** as well. A squash merge takes every
-comment thread with it; the body is the only part that survives into the history.
+Whatever is still open at the end goes in the **PR body** as well, one line each. A squash merge
+takes every comment thread with it; the body is the only part that survives into the history.
 
 If any reviewer returned `ESCALATE`, stop. Report to the user and leave the PR in draft. An
 architectural problem is not a fix task.
