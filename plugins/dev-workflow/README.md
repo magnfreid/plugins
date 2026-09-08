@@ -31,7 +31,7 @@ not a second pass layered on top of the first:
 |---|---|
 | `skills/feature` | The orchestrator — state machine, gate, PR flow, resume |
 | `skills/plan-format` | What makes a plan executable by an agent that won't push back |
-| `skills/pr-conventions` | Branch, commit, and PR body structure |
+| `skills/pr-conventions` | Branch, commit, and PR body structure, and the voice for anything posted to GitHub |
 | `skills/testing-doctrine` | What to test and why — stack-agnostic; the project supplies the patterns |
 | `skills/design-handoff` | Turning a design tool's output into shipped UI, and what to verify first |
 | `agents/workflow-planner` | Opus. Reads the repo, writes the plan, writes nothing else |
@@ -47,6 +47,12 @@ only goes ready once the body reflects the final state. Findings post twice on p
 the line they concern, for reading, and as a summary comment, which is what the fix step reads and
 what survives fixes marking the inline ones outdated. Anything still open also goes in the PR body,
 because a squash merge takes every comment thread with it.
+
+**Everything posted to GitHub is written for a junior developer.** The voice rules in
+`pr-conventions` govern PR bodies, review summary comments, and inline comments alike: short, plain
+language, what is wrong → what breaks → what to do, with a snippet instead of a paragraph wherever
+one will do. The one thing brevity never buys is substance — the failure scenario, the `file:line`,
+and every deferred finding stay in, however short the comment gets.
 
 **File-based handoff.** Every step writes an artifact to `.claude/workflow/<slug>/`. Subagents
 return summaries, not context — so the plan the implementer reads is the plan on disk, not a

@@ -1,12 +1,44 @@
 ---
 name: pr-conventions
-description: Branch naming, commit message style, and pull request body structure for Magnus's repositories. Use when creating a branch, writing a commit message, or opening or updating a PR — particularly inside the dev-workflow feature workflow.
+description: Branch naming, commit message style, pull request body structure, and the house voice for anything written into GitHub — PR bodies, review comments, inline comments, replies on someone else's PR. Use when creating a branch, writing a commit message, opening or updating a PR, or writing review feedback that will be posted — particularly inside the dev-workflow feature workflow.
 ---
 
 # Branch, commit, and PR conventions
 
 Defaults. A repository's own stated convention — CONTRIBUTING.md, a PR template, the existing
 history — always wins. Check `git log --oneline -20` before assuming.
+
+## Voice — anything posted to GitHub
+
+Covers PR bodies, review summary comments, inline comments on a line, and replies on someone
+else's PR. Write for a junior developer who does not have your context: they should finish reading
+knowing what is wrong and what to do about it.
+
+- **Be short.** A finding is two or three sentences. A body section is a short paragraph or a few
+  bullets. Prose is fine, a wall of it is not. If a sentence would not change what the reader does,
+  cut it.
+- **Say the thing, then the fix.** What is wrong → what breaks because of it → what to do. In that
+  order, with no preamble and no restating the diff back at the author.
+- **Plain words.** Prefer the ordinary description over the pattern name: "the cached list still
+  holds the deleted order" over "a coherence violation between the mutation and projection layers".
+  Name a pattern only when the pattern is the point, and then say what it means in half a sentence.
+- **Show rather than explain.** A two-line snippet of the fix beats a paragraph describing its
+  shape.
+- **Cut words, never facts.** The failure scenario, the `file:line`, the reason a check was not
+  run, a deferred finding, an unpredictable edit — all of it stays however short the comment gets.
+  If it cannot be both short and complete, be complete.
+- **No filler.** No "great work overall", no severity theatre, no softening a real defect into
+  vagueness to sound polite. Stating a problem plainly is not rude.
+
+A finding in this voice:
+
+> **`OrderRepository.dart:88` — the cached list is not updated after a delete.**
+> `deleteOrder` removes the row from the database but leaves `_cachedOrders` untouched, so the list
+> screen keeps showing the deleted order until the app restarts. Clear the cache in `deleteOrder`
+> the way `addOrder` does on line 61.
+
+What, what breaks, what to do — three sentences. Not: "Consider whether the caching strategy here
+correctly maintains coherence with the persistence layer following mutation operations."
 
 ## Branches
 
@@ -43,28 +75,30 @@ generated-by trailers unless the repo already uses them.
 
 ```markdown
 ## What
-One paragraph. What this changes and why, in terms of behaviour rather than files.
+Two or three sentences: what changes for someone using the app, and why.
 
 ## Approach
-The two or three decisions that shaped the implementation. Link the plan if it is committed.
-Anything that departs from convention goes here with its reason.
+The two or three decisions that shaped it, a bullet each. Anything that departs from convention
+goes here with its reason. Link the plan if it is committed.
 
 ## Review
 Automated review: N blocking, M non-blocking. Full findings in the comment thread.
 - Fixed: <one line each>
-- Deferred: <one line each, with why>
+- Deferred: <one line each, and why it can wait>
 
 ## Verification
-Build: clean (from scratch) — or: incremental, no warnings claim made.
+Build: clean, from scratch — or: incremental, so no claim about warnings.
 - [x] fvm dart analyze
 - [x] fvm flutter test (48 passed)
 - [ ] Manual: pagination on a slow connection — not automatable
 
 ## Notes
-Anything a reviewer should know: out-of-scope problems noticed, follow-ups worth filing, and
-**any edit no human made** — an SDK migrator, codegen output, a formatter pass, a bulk
+Only what a reviewer would not guess from the diff: out-of-scope problems noticed, follow-ups worth
+filing, and **any edit no human made** — an SDK migrator, codegen output, a formatter pass, a bulk
 find/replace across platform folders.
 ```
+
+Drop a section that has nothing in it rather than writing "N/A".
 
 Draft while unreviewed. Ready only once fixes have landed and the body reflects the final state.
 

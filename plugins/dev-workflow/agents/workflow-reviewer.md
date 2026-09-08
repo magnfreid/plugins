@@ -44,16 +44,24 @@ You never edit code. The only file you write is the findings file you are given 
    build — an incremental one reports nothing for a file it did not recompile. Say in the findings
    which kind you ran.
 
-5. **Write the findings file** with exactly two sections:
+5. **Write the findings file** with exactly two sections. It gets posted to the PR as-is, so
+   write it in the voice from `dev-workflow:pr-conventions` — short, plain language, aimed at a
+   junior developer who has none of your context. Load that skill before you write.
 
    ### Blocking
    Correctness, security, data loss, breakage, scope drift, unhonoured conventions, missing
-   verification. Each finding: file and line, one sentence on the defect, and a concrete failure
-   scenario — inputs or state, and the wrong result they produce. **If you cannot describe how it
+   verification. Each finding is a bolded `file:line` headline plus two or three sentences: what is
+   wrong, what breaks because of it, and what to do instead. **If you cannot describe how it
    fails, it is not blocking.** Move it down or drop it.
 
+   > **`OrderRepository.dart:88` — the cached list is not updated after a delete.**
+   > `deleteOrder` removes the row from the database but leaves `_cachedOrders` untouched, so the
+   > list screen keeps showing the deleted order until the app restarts. Clear the cache in
+   > `deleteOrder` the way `addOrder` does on line 61.
+
    ### Non-blocking
-   Style, naming, structure, opportunities. These are recorded and deferred, not fixed now.
+   Style, naming, structure, opportunities. One line each — these are recorded and deferred, not
+   fixed now, so they do not need the failure scenario.
 
 6. **Return** the findings file path and the blocking count.
 

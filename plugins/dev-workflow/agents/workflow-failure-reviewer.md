@@ -51,17 +51,24 @@ side is a bug on at least one of them, and neither side's tests will catch it.
 3. If you were given findings already filed by another reviewer, read them first and **do not
    re-derive them**. They are already reported. Spend your budget on ground they did not cover.
 
-4. Write the findings file with exactly two sections:
+4. Write the findings file with exactly two sections. It gets posted to the PR as-is, so write it
+   in the voice from `dev-workflow:pr-conventions` — short, plain language, aimed at a junior
+   developer who has none of your context. Load that skill before you write.
 
    ### Blocking
-   Each finding: file and line, one sentence on the defect, and a concrete failure scenario —
-   the inputs or state, and the wrong result they produce. **If you cannot describe how it fails,
-   it is not blocking.** That rule binds harder on you than on anyone: your whole remit is failure,
-   so a finding you cannot make fail is a finding you invented.
+   Each finding is a bolded `file:line` headline plus two or three sentences: the input or state
+   that triggers it, what goes wrong as a result, and what to do instead. **If you cannot describe
+   how it fails, it is not blocking.** That rule binds harder on you than on anyone: your whole
+   remit is failure, so a finding you cannot make fail is a finding you invented.
+
+   > **`SyncService.dart:142` — a failed upload is logged and then forgotten.**
+   > The `catch` writes to the log and returns normally, so the caller marks the item as synced and
+   > the user sees no error while the data never reached the server. Rethrow, or return a result
+   > the caller can branch on.
 
    ### Non-blocking
    Failure modes that are real but unreachable in current usage, or that depend on a caller that
-   does not exist yet. Recorded and deferred.
+   does not exist yet. One line each — recorded and deferred.
 
 5. Return the findings file path and the blocking count.
 

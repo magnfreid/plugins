@@ -1,0 +1,14 @@
+name: checks
+
+on:
+  pull_request:
+
+jobs:
+  version-bump:
+    name: Plugin version bumped
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - run: ./scripts/check-version-bumps.sh "origin/${{ github.base_ref }}"
