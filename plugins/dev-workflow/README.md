@@ -1,8 +1,10 @@
 # dev-workflow
 
-The feature loop: **clarify → plan (Opus) → approve → implement (Sonnet) → draft PR → independent
-review → fix → ready.** One approval gate, at the plan. Everything after it is recoverable through
-the PR.
+The feature loop: **clarify → plan (Opus) → approve → implement (Sonnet) → review → fix → commit and
+push → hand over the diff.** Two stops — the plan, and the finished branch.
+
+It does not open a pull request. It ends with a pushed branch and a short report; Magnus reads the
+diff, says what he wants changed, and opens the PR himself when it is worth the team's time.
 
 ## Use it
 
@@ -18,18 +20,11 @@ or explicitly:
 
 Both enter at step 0 and ask whatever is unclear before any planning happens.
 
-Add `--deep-review` (or `--deep`) to swap the standard review for a deeper one **in the same run** —
-not a second pass layered on top of the first:
-
-```
-/dev-workflow:feature --deep-review migrate the session store to the new token API
-```
-
 ## What's in here
 
 | Piece | Role |
 |---|---|
-| `skills/feature` | The orchestrator — state machine, gate, PR flow, resume |
+| `skills/feature` | The orchestrator — state machine, gate, handoff, resume |
 | `skills/plan-format` | What makes a plan executable by an agent that won't push back |
 | `skills/pr-conventions` | Branch, commit, and PR body structure, and the voice for anything posted to GitHub |
 | `skills/testing-doctrine` | What to test and why — stack-agnostic; the project supplies the patterns |
@@ -37,49 +32,35 @@ not a second pass layered on top of the first:
 | `agents/workflow-planner` | Opus. Reads the repo, writes the plan, writes nothing else |
 | `agents/workflow-executor` | Sonnet. Executes the plan faithfully, or applies assigned fixes |
 | `agents/workflow-reviewer` | Reviews the diff with no knowledge of how it was written |
-| `agents/workflow-failure-reviewer` | `--deep-review` only. Second lens: swallowed errors, boundaries, stale state, divergence |
 
 ## Design notes
 
-**The PR is the middle of the run, not the end.** It opens as a draft *before* the review so the
-findings have somewhere to attach: comments land on the draft, fix commits land under them, and it
-only goes ready once the body reflects the final state. Findings post twice on purpose — inline on
-the line they concern, for reading, and as a summary comment, which is what the fix step reads and
-what survives fixes marking the inline ones outdated. Anything still open also goes in the PR body,
-because a squash merge takes every comment thread with it.
+**Plan, implement, review and fix are steps in building the thing, not events to document.** They
+write local files under `.claude/workflow/` and nothing else. Nothing about the process reaches
+GitHub — not in a commit message, not in a PR body, not as a comment. A reviewer opening the PR
+should see a change someone made on purpose, which is what it is; how it was made is not news to
+them, and narrating it is how a PR ends up longer than the diff.
 
-**Everything posted to GitHub is written for a junior developer.** The voice rules in
-`pr-conventions` govern PR bodies, review summary comments, and inline comments alike: short, plain
-language, what is wrong → what breaks → what to do, with a snippet instead of a paragraph wherever
-one will do. The one thing brevity never buys is substance — the failure scenario, the `file:line`,
-and every deferred finding stay in, however short the comment gets.
+The corollary is that a run produces **one commit**. Implementation and review fixes land together,
+because the review was part of writing the code rather than a change to it. Only what Magnus asks
+for after the handoff gets commits of its own.
+
+**The workflow stops before the PR.** A PR is a request for other people's attention, and only
+Magnus knows when the branch has earned it. So the run ends at a pushed branch with a report: what
+was built, what was verified, what was deferred, and the command to open the diff. What happens
+next — questions, revisions, and eventually a PR — is a conversation, not a step in a state
+machine.
+
+**One review, run blind.** An agent cannot review code it just wrote; it defends the reasoning it
+already holds. The reviewer sees the diff and the plan and nothing about how the change was
+produced. It runs `code-review` at its default effort and adds the two checks that need the plan —
+conformance to the plan, and to the conventions the plan recorded. A change that deserves a harder
+look gets one because Magnus asks for it at the handoff, where he can see what he is deciding
+about, rather than because a flag was set before anyone had seen the code.
 
 **File-based handoff.** Every step writes an artifact to `.claude/workflow/<slug>/`. Subagents
 return summaries, not context — so the plan the implementer reads is the plan on disk, not a
 paraphrase. It also makes the run resumable: a step counts as done only if its file exists.
-
-**The reviewer is context-blind.** An agent cannot review code it just wrote; it defends the
-reasoning it already holds. The reviewer sees the diff and the plan, and nothing about how the
-change was produced.
-
-**Two levels, differing in one step.** The default review is exactly what a fresh-context
-`code-review` gives you, plus the two checks that need the plan — conformance to it, and to the
-conventions it recorded. `--deep-review` raises the `code-review` effort to `high` and adds a second lens
-running in parallel, plus any review agents the *project's* `CLAUDE.md` names. Nothing else about
-the workflow changes, and the settings that protect the result — independent verification, a
-from-scratch build behind any warnings claim, one approval gate — are unconditional.
-
-**The second lens does not overlap the first.** Two reviewers running the same sweep cost twice and
-find the same things. `workflow-failure-reviewer` is scoped to what a correctness pass
-systematically under-weights: errors that are caught and dropped, boundary inputs that trap, a
-write that never reaches the representation the reader reads, and two implementations of one
-contract that disagree about the empty case.
-
-**Fix rounds are per reviewer, not per run.** Reviewers always find something, and one round each
-is how a second lens earns its keep. What signals a bad plan is the *same* reviewer coming back
-with new blocking findings after its round — that escalates. A different reviewer finding something
-the first missed is the system working. Three fix commits is the hard cap either way; past it the
-run stops and writes the remainder into the PR body.
 
 **Halts are triaged, not uniform.** An agent that reports a defect halts the run. An agent whose
 transport dropped — API error, stall, watchdog — is resumed by message, which keeps its transcript
