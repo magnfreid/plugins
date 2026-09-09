@@ -1,6 +1,6 @@
 ---
 name: pr-conventions
-description: Branch naming, commit message style, pull request body structure, and the house voice for anything written into GitHub — PR bodies, review comments, inline comments, replies on someone else's PR. Use when creating a branch, writing a commit message, opening or updating a PR, or writing review feedback that will be posted — particularly inside the dev-workflow feature workflow.
+description: Branch naming, commit message style, pull request body structure, and the house voice for anything written into GitHub — PR bodies, review comments, inline comments, replies on someone else's PR. Use when creating a branch, writing a commit message, opening or updating a PR, or writing review feedback that will be posted.
 ---
 
 # Branch, commit, and PR conventions
@@ -59,19 +59,29 @@ feat(orders): paginate order history
 fix(auth): read currentUser inside the redirect callback
 ```
 
-Two commits per workflow run, kept separate on purpose:
+**A commit message describes the change, not how it was produced.** No plans, no reviews, no
+agents, no step numbers, no "as per the plan", no generated-by trailers unless the repo already
+uses them. Someone reading `git log` in six months wants to know what moved, and the process that
+moved it is not part of the answer.
 
-1. The implementation.
-2. `fix(<scope>): address review findings` — so the PR history shows what the review changed.
+One commit per workflow run. Implementation and the fixes from the workflow's own review land
+together — that review is a step inside building the change, not a change to it, so it does not
+earn a line in the history.
 
-At `--deep-review` there may be more than one of the second kind, one per reviewer. Name the lens rather
-than numbering them — `fix(orders): address failure-mode review findings` — so the history says
-what each round was answering.
+After the handoff, each round of changes Magnus asks for gets its own commit, named for what
+changed:
 
-Body only when the *why* is not obvious from the diff. No filler, no "as per the plan", no
-generated-by trailers unless the repo already uses them.
+```
+fix(orders): keep the cursor when the list refreshes
+```
+
+Body only when the *why* is not obvious from the diff.
 
 ## PR body
+
+Magnus opens the pull request, by hand, when the branch is worth the team's time. Keep the body
+about the change — a reviewer wants to know what it does and what to look at, not what process
+produced it.
 
 ```markdown
 ## What
@@ -79,12 +89,7 @@ Two or three sentences: what changes for someone using the app, and why.
 
 ## Approach
 The two or three decisions that shaped it, a bullet each. Anything that departs from convention
-goes here with its reason. Link the plan if it is committed.
-
-## Review
-Automated review: N blocking, M non-blocking. Full findings in the comment thread.
-- Fixed: <one line each>
-- Deferred: <one line each, and why it can wait>
+goes here with its reason.
 
 ## Verification
 Build: clean, from scratch — or: incremental, so no claim about warnings.
@@ -93,14 +98,13 @@ Build: clean, from scratch — or: incremental, so no claim about warnings.
 - [ ] Manual: pagination on a slow connection — not automatable
 
 ## Notes
-Only what a reviewer would not guess from the diff: out-of-scope problems noticed, follow-ups worth
-filing, and **any edit no human made** — an SDK migrator, codegen output, a formatter pass, a bulk
-find/replace across platform folders.
+Only what a reviewer would not guess from the diff: a known gap left in on purpose, a follow-up
+worth filing, and **any edit no human made** — an SDK migrator, codegen output, a formatter pass,
+a bulk find/replace across platform folders.
 ```
 
-Drop a section that has nothing in it rather than writing "N/A".
-
-Draft while unreviewed. Ready only once fixes have landed and the body reflects the final state.
+Drop a section that has nothing in it rather than writing "N/A". Four short sections beat four
+long ones; a body nobody finishes reading is a body that hid something.
 
 ## Rules
 
@@ -108,8 +112,6 @@ Draft while unreviewed. Ready only once fixes have landed and the body reflects 
 - **State which build backs the claim.** "No warnings" after an incremental build is not a result —
   the compiler said nothing about the files it did not recompile. Either build from scratch or say
   the run was incremental and make no claim about warnings.
-- Deferred findings go in the body, not only in the comment thread — the thread disappears on a
-  squash merge.
 - Never open a PR from a broken build.
 - The title is the commit convention, not a sentence: `feat(orders): paginate order history`.
 - **Call out anything a reviewer would not predict from the title.** Auto-migrated config,
@@ -118,6 +120,3 @@ Draft while unreviewed. Ready only once fixes have landed and the body reflects 
   sentence, an unnamed one costs an hour.
 - **Never force-push a branch under review.** Push follow-up commits instead. Rewriting history
   under a reviewer invalidates every comment anchored to it and hides what changed between passes.
-- A project's own instruction to "stop after opening the PR" means *do not merge*. It does not
-  forbid the review and fix steps — those happen on the PR, which is exactly where the project
-  wanted them.

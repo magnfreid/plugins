@@ -1,16 +1,16 @@
 ---
 name: feature
-description: Run the full feature workflow — clarify the requirement, plan it with Opus, get approval, implement with Sonnet, review it independently, apply fixes, and ship a pull request. Use whenever Magnus wants to build, add, change, fix, or refactor something in a codebase and the work is bigger than a trivial one-file edit — "I want to implement X", "add X to the app", "fix the bug where X", "refactor X". Also invoked directly as /dev-workflow:feature, optionally with --deep-review (or --deep) to replace the standard review with a deeper one in the same run.
-argument-hint: [what you want to build or fix] [--deep-review]
+description: Run the full feature workflow — clarify the requirement, plan it with Opus, get approval, implement with Sonnet, review it from a fresh context, apply fixes, commit and push, then hand the diff to Magnus. Use whenever Magnus wants to build, add, change, fix, or refactor something in a codebase and the work is bigger than a trivial one-file edit — "I want to implement X", "add X to the app", "fix the bug where X", "refactor X". Also invoked directly as /dev-workflow:feature. Does not open a pull request — Magnus does that himself once he has read the diff.
+argument-hint: [what you want to build or fix]
 ---
 
 # Feature workflow
 
-One approval gate, at the plan. Everything after it runs unattended and is recoverable through the
-pull request.
+Two stops: the plan, and the finished diff. Between them the work runs unattended. After the
+second one, Magnus decides what the team sees.
 
 ```
-clarify → PLAN → [approve] → branch + implement → draft PR → review → fix → ready
+clarify → PLAN → [approve] → branch + implement → review → fix → commit + push → [read the diff] → revise
 ```
 
 **Do not use this for:** a one-line change, a question about the code, exploration, or anything
@@ -18,28 +18,23 @@ where the user is still thinking out loud rather than asking for work. Say what 
 do and let them redirect before you spend a planning pass on it. If a request is ambiguous in size,
 ask; do not spin up the machinery on a typo fix.
 
-## Levels
+## The workflow does not open a pull request
 
-`--deep-review` (`--deep` is accepted as a shorthand) changes step 4 and step 5. Nothing else. It
-**replaces** the standard review rather than adding a pass after it — there is one review phase per
-run, and the level decides who is in it.
+It stops with a pushed branch and a report in chat. Magnus reads the diff, raises what he wants
+changed, and opens the PR himself when it is worth other people's time.
 
-Everything not in this table — plan conformance, convention conformance, independent verification,
-the from-scratch build — is unconditional and does not vary with the level.
+That boundary is the point of the redesign, and it has a second half: **plan, implement, review and
+fix are steps in building the thing, not events worth documenting.** They produce local files under
+`.claude/workflow/` and nothing else. Do not post them, do not narrate them into a PR body, do not
+write commit messages that describe the process rather than the change. When the PR does go up it
+should read as though a person wrote the code and knew what they were doing — because one did, and
+the machinery that helped is not news to the reviewer.
 
-| | default | `--deep-review` |
-|---|---|---|
-| `code-review` effort | its own default | `high` |
-| Review lenses | `workflow-reviewer` | + `workflow-failure-reviewer`, in parallel, + any review agents the project's `CLAUDE.md` names |
-| Fix rounds | one, total | one per reviewer that filed blocking findings, capped at 3 fix commits |
+Concretely, in this workflow: **nothing is ever written to GitHub except the branch and its
+commits.** No PR, no comments, no inline findings, no summary threads.
 
-The default is deliberately *exactly* what a fresh-context code review gives you, plus the two
-checks that need the plan. It is the right level for most work. Reach for `--deep-review` when the
-change crosses a trust boundary, touches money or auth, is implemented twice (two platforms, two
-call sites), or is large enough that you would not read the whole diff yourself.
-
-Record the level in `state.json` at step 0 so a resumed run does not silently change level
-mid-flight.
+Responding to review feedback once the PR is up is real work, but it is not this skill. It is a
+conversation with the team, and it starts after this workflow has ended.
 
 ## State
 
@@ -48,18 +43,19 @@ from the objective (`order-history-pagination`).
 
 | File | Written by | Contains |
 |---|---|---|
-| `state.json` | orchestrator | step statuses, level, branch, base, PR number, stack |
+| `state.json` | orchestrator | step statuses, branch, base, stack |
 | `brief.md` | orchestrator | the clarified requirement |
 | `plan.md` | workflow-planner | the approved plan |
 | `review.md` | workflow-reviewer | blocking and non-blocking findings |
-| `review-<lens>.md` | each extra reviewer | one file per additional lens, `--deep-review` only |
 | `fixes.md` | orchestrator | what was fixed, what was deferred |
 
 **A step counts as done only if its file exists.** That rule is what makes this resumable and what
 stops a long chain from silently skipping a step. Never mark a step complete from memory.
 
 On first run in a repo, add the workflow directory to local git excludes so it never lands in a
-commit: append `.claude/workflow/` to `.git/info/exclude`.
+commit: append `.claude/workflow/` to `.git/info/exclude`. Do this **before** anything is staged —
+the run stages with `git add -A`, and an unexcluded workflow directory would ride along into the
+commit and then into the PR.
 
 Read `references/workflow-state.md` for the `state.json` shape and the resume rules.
 
@@ -73,10 +69,7 @@ behaviour at the edges, what is explicitly out of scope, whether an existing pat
 followed or replaced. Ask in one batch, not one at a time. Two or three questions that matter beat
 a checklist.
 
-Do not ask what you can read. If the repo answers it, read the repo. **The level is not a question
-either** — take it from the invocation, and if the change looks like one of the `--deep-review` cases
-above while the user did not ask for it, say so once at the gate rather than interrupting here.
-Flag it in the report at the end too if it was declined and the review then found blocking work.
+Do not ask what you can read. If the repo answers it, read the repo.
 
 If the input is a **design handoff** — a `design/<screen>/` folder, a prototype, a mockup — load
 `dev-workflow:design-handoff` now. It changes what you have to ask about: handoffs regularly assert
@@ -93,18 +86,15 @@ Detect the stack first (`references/stack-detection.md`), record it in `state.js
 Spawn **workflow-planner** (Opus). Give it: the path to `brief.md`, the path to write `plan.md`,
 the detected stack, and the repo root. Nothing else — it reads what it needs.
 
-## Gate — the one stop
+## Gate — the approval
 
 Show the user the plan's Objective, Conventions applied, Files, and Guard rails. Not the whole
 file; they can open it.
 
-Alongside it, state in one line each — these are the settings the rest of the run uses, and this
-is the last moment to change them without stopping the machinery again:
-
-- **Review level**, and if the plan turned out to hit a `--deep-review` case they did not ask for, that.
-- **Implementer model** — Sonnet by default. Say Haiku instead if the plan came back mechanical:
-  a long list of near-identical edits, a rename, a scaffold, generated-code wiring. Judge this from
-  the plan you now have, not from the request. Magnus can override either way.
+Alongside it, state the **implementer model** in one line — Sonnet by default. Say Haiku instead if
+the plan came back mechanical: a long list of near-identical edits, a rename, a scaffold,
+generated-code wiring. Judge this from the plan you now have, not from the request. Magnus can
+override either way.
 
 If Open questions is non-empty, the plan is not approvable — get answers, hand them back to the
 planner, regenerate.
@@ -124,128 +114,111 @@ apart.
    default branch.**
 4. Spawn **workflow-executor** with the path to `plan.md`, on the model confirmed at the gate.
 5. When it returns, run the plan's verification commands yourself. Do not take its word for it.
+6. `git add -A`. **Stage, do not commit.** The commit comes after the review, so that a run ending
+   clean produces one commit rather than a trail of them — and staging is what gives the reviewer a
+   diff to read, since `HEAD` is still the base commit at that point.
 
 **Build from scratch before making any claim about warnings.** An incremental build reports zero
-warnings for a file it did not recompile, which is how "builds clean" ends up in a PR body untrue.
+warnings for a file it did not recompile, which is how "builds clean" ends up in a report untrue.
 Incremental is fine for "tests pass". It is not evidence about warnings. Record which kind you ran.
 
-**Hard stop:** if verification fails, stop here and report. Never open a PR on a broken build.
-**Hard stop:** if the executor reports missing or contradictory plan information, that is a plan
-defect — take it back to the user, not into a guess.
+**Hard stop:** if verification fails, stop here and report. **Hard stop:** if the executor reports
+missing or contradictory plan information, that is a plan defect — take it back to the user, not
+into a guess.
 
-Commit with the message convention in `dev-workflow:pr-conventions`.
+## Step 3 — Review
 
-## Step 3 — Draft PR
+Spawn **workflow-reviewer** with the base ref and the paths to `plan.md` and `review.md`. It reads
+the staged diff — `git diff --cached <base>` — because nothing is committed yet. It gets no other
+context about how the change was made; that independence is the entire value of this step, so do
+not summarize the implementation into its prompt.
 
-```
-gh pr create --draft --base <base> --title "<title>" --body-file <body>
-```
+It writes its findings to `review.md` and returns the blocking count. That file is for step 4 and
+for your report at the handoff. It goes nowhere else.
 
-Body from `dev-workflow:pr-conventions`, marked as review pending. Record the PR number in
-`state.json`.
+If the reviewer returned `ESCALATE`, stop. Report to the user; the work stays staged and
+uncommitted on the branch. An architectural problem is not a fix task.
 
-**Hard stop:** if `gh` is missing or unauthenticated, stop here. The branch and commits are safe;
-report what remains and let the user open the PR.
+This is the review the workflow owes you, not the only review that exists. If the change deserves a
+harder look, Magnus asks for one — `/code-review high`, `/code-review ultra`, or a lens of his
+choosing — at the handoff, where he can see what he is deciding about.
 
-## Step 4 — Review
+## Step 4 — Fix
 
-The draft PR from step 3 is what makes this step readable: findings land on the PR, fixes land as
-commits under them, and the whole exchange is still there when you open it. That is why the PR is
-opened before the review rather than after it.
+One round. Spawn **workflow-executor** in fix mode with `review.md` and an explicit list of the
+blocking findings to address. Non-blocking findings are not assigned — they get deferred and
+reported.
 
-Spawn **workflow-reviewer** with the base ref, the PR number, the paths to `plan.md` and
-`review.md`, and the `code-review` effort for this level. It gets no other context about how the change was made — that
-independence is the entire value of this step, so do not summarize the implementation into its
-prompt.
+Re-run verification afterwards yourself, then `git add -A` again so the fixes join the staged work.
 
-**At `--deep-review`, spawn these in parallel with it**, each with the same inputs and its own findings
-file:
+If the review came back with nothing blocking, there is no executor round — but still write
+`fixes.md`, recording the deferred non-blocking findings. The step is done when the file exists,
+and a clean review with no file looks identical to a skipped step.
 
-- **workflow-failure-reviewer** → `review-failure.md`. A second lens scoped to failure modes rather
-  than correctness in general. It exists because the two find near-disjoint sets: a correctness
-  sweep reads a swallowed error or a stale projection as reasonable code.
-- **Any review agents the project's own `CLAUDE.md` names** for this kind of change. If it names
-  none, nothing extra runs. This is what makes a project's review table load-bearing instead of
-  decorative, and it keeps project-specific policy out of this skill.
-
-**Posting the findings.** Everything posted here is read by a human — write it in the voice from
-`dev-workflow:pr-conventions`: short, plain language, aimed at a junior developer with none of the
-context. Two forms, and they are not redundant:
-
-- **Inline, on the line.** `workflow-reviewer` passes `--comment` to the `code-review` skill, which
-  anchors each of its findings to the line it is about. This is the form worth reading — a finding
-  next to its code needs no explaining.
-- **A summary comment per findings file**, `gh pr comment <n> --body-file <file>`. This one is
-  authoritative: it is what step 5 reads, it carries the plan- and convention-conformance findings
-  that have no single line to sit on, and it survives when inline comments are marked outdated by
-  the fixes that answer them.
-
-Lenses other than `workflow-reviewer` post the summary form only — their findings cite `file:line`
-in the text, which is navigable, and hand-assembling review payloads for them would add a fragile
-step to the one part of this workflow that must not fail quietly.
-
-Whatever is still open at the end goes in the **PR body** as well, one line each. A squash merge
-takes every comment thread with it; the body is the only part that survives into the history.
-
-If any reviewer returned `ESCALATE`, stop. Report to the user and leave the PR in draft. An
-architectural problem is not a fix task.
-
-**What may cross between reviewers.** On a retry, a resume, or a reviewer spawned after another has
-already reported, you may pass the findings already filed, so it stops re-deriving them and spends
-its budget on new ground. You may **never** pass implementation rationale. Findings are review
-output; rationale is the implementer's reasoning, and passing that is what would cost independence.
-
-## Step 5 — Fix
-
-| Level | Rounds |
-|---|---|
-| default | One round, total. |
-| `--deep-review` | One round per reviewer that filed blocking findings. Hard cap of 3 fix commits. |
-
-Spawn **workflow-executor** in fix mode with the findings file and an explicit list of the blocking
-findings to address. Non-blocking findings are not assigned — they get deferred. Re-run
-verification. Commit each round as its own commit so the PR history shows what each review changed;
-never amend or force-push a branch under review.
-
-**Stop and escalate when the *same* reviewer comes back with new blocking findings** after its
-round. That is the signal that the plan was wrong rather than that another pass is needed. A
-*different* reviewer finding something the first did not is the system working, not ping-pong.
-
-At the cap, stop even with findings outstanding: write them into the PR body and report. An
-unattended run may end incomplete; it may never end incomplete and silent.
+**Stop and escalate if the reviewer's findings turn out to need a design decision** rather than a
+fix, or if verification fails after the fix round. Both mean the plan was wrong, and another
+unattended pass will not make it right.
 
 Write `fixes.md`: fixed, deferred, and anything that could not be fixed without a decision.
 
-## Step 6 — Ready
+## Step 5 — Commit and push
 
-1. Update the PR body: what was built, which build kind backs the verification claims, what the
-   review found, what was fixed, what was deferred (with the non-blocking findings listed so they
-   are not lost).
-2. `gh pr ready <n>`.
-3. Report to the user: PR link, one line on what shipped, the deferred list, and — if the diff is
-   large enough that a deeper pass would pay (roughly 1000+ lines or 25+ files) — that
-   `/code-review ultra` is worth running by hand. That one is user-triggered and billed, so this
-   workflow cannot launch it; saying so is the most it can do.
+One commit for the whole run — implementation and review fixes together, already staged. The
+review was a step in building this, not a change to it, so it does not get its own entry in the
+history.
+
+Message from `dev-workflow:pr-conventions`: describe the change, not the process. Nothing about
+plans, reviews, agents, or steps.
+
+Then `git push -u origin <branch>`.
+
+**Hard stop:** if the push is rejected or the remote is unreachable, report it. The commit is safe
+locally and the user can push it themselves.
+
+## Step 6 — Handoff
+
+Stop and report. Keep it to what Magnus needs in order to read the diff:
+
+- The branch, and `git diff <base>...HEAD` so he can open it in one paste.
+- One or two lines on what was built.
+- Verification: what ran, which build kind backs any warnings claim.
+- Deferred non-blocking findings, one line each — this is the only place they surface, so do not
+  drop them.
+- Anything a reader would not predict from the diff: a codegen pass, a bulk rename, a dependency
+  that came along.
+
+Then wait. He reads it, asks questions, and says what he wants changed.
+
+**Revisions.** Implement what he asks for directly — you have the context, and a round of small
+agreed changes does not need the planner. Re-run verification, commit each agreed round as its own
+commit, and push. Those commits are his changes, not review fixes, and their messages say what
+changed.
+
+If a request is large enough to be a different feature, say so and start a new run rather than
+growing this one.
+
+The workflow ends here. Magnus opens the pull request when he decides the branch is worth the
+team's time.
 
 ## Failure handling
 
-Three buckets, and the distinction matters: the old single rule of "never work around a stop" reads
-as *halt*, which is right for an agent that reports a problem and wrong for one whose transport
+Three buckets, and the distinction matters: a single rule of "never work around a stop" reads as
+*halt*, which is right for an agent that reports a problem and wrong for one whose transport
 dropped.
 
 **Transport failure** — an agent killed by an API error, a stall, or a watchdog, having produced
 nothing. Not a finding. **Resume it by message**, which preserves its transcript, rather than
 spawning a fresh one and paying for the context again. Two attempts, then halt and report.
 
-**Judgment needed** — a reviewer returns `ESCALATE`, the executor hits missing or contradictory
-plan information, verification fails, the tree is dirty, `gh` is unauthenticated, the fix cap is
-reached. **Halt.** The state file records where, the PR stays in draft, and the user decides.
+**Judgment needed** — the reviewer returns `ESCALATE`, the executor hits missing or contradictory
+plan information, verification fails, the tree is dirty, the push is rejected. **Halt.** The state
+file records where, and the user decides.
 
-**Everything else** — keep going to the PR. That is what the approval bought.
+**Everything else** — keep going to the handoff. That is what the approval bought.
 
 On any halt, if a notification tool is available, use it. The point of a single gate is that Magnus
 walks away after approving; a run that halts silently wastes the time it was meant to save.
 
-A half-finished branch with an honest report is a good outcome; a PR that papers over a failure is
-not. To resume after any stop: re-invoke this skill and it picks up from the first step whose file
-is missing.
+A half-finished branch with an honest report is a good outcome; a clean-looking one that papers
+over a failure is not. To resume after any stop: re-invoke this skill and it picks up from the
+first step whose file is missing.

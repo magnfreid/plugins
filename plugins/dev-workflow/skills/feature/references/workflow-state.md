@@ -5,36 +5,31 @@
 ```json
 {
   "slug": "order-history-pagination",
-  "created": "2026-08-22T10:14:00+02:00",
+  "created": "2026-09-09T10:14:00+02:00",
   "stack": "flutter",
-  "level": "default",
   "implementer": "sonnet",
   "repoRoot": "/Users/magnfreid/dev/myapp",
   "baseBranch": "main",
   "branch": "feature/order-history-pagination",
-  "pr": 142,
   "verification": [
     "fvm dart run build_runner build --delete-conflicting-outputs",
     "fvm dart analyze",
     "fvm flutter test"
-  ],
-  "fixRounds": [
-    { "reviewer": "workflow-reviewer", "commit": "a1b2c3d", "blocking": 2 }
   ],
   "steps": {
     "clarify":   "done",
     "plan":      "done",
     "approved":  "done",
     "implement": "done",
-    "draft_pr":  "done",
     "review":    "blocked",
     "fix":       "pending",
-    "ready":     "pending"
+    "commit":    "pending",
+    "handoff":   "pending"
   },
   "halt": {
     "step": "review",
     "reason": "reviewer returned ESCALATE — pagination cursor belongs in the repository, not the BLoC",
-    "at": "2026-08-22T10:52:00+02:00"
+    "at": "2026-09-09T10:52:00+02:00"
   }
 }
 ```
@@ -42,14 +37,10 @@
 Status values: `pending`, `done`, `blocked`. `halt` is present only when a step stopped, and is
 cleared when that step later succeeds.
 
-`level` is `default` or `deep`, fixed at step 0 from the invocation (`--deep-review`, or `--deep`). A resumed run keeps the level it started with —
-changing it mid-flight would mean half the diff was reviewed under one policy and half under
-another, which is worse than either policy consistently applied. To change it, finish or abandon
-the run.
+`implementer` is the model confirmed at the gate.
 
-`implementer` is the model confirmed at the gate. `fixRounds` is append-only, one entry per fix
-commit; it is what enforces the per-reviewer round rule and the cap of 3, so it must be written
-before the commit rather than after.
+There is no `pr` field and no review level. The workflow does not open a pull request, and there is
+one review lens — if a change needs a harder look, Magnus asks for it at the handoff.
 
 ## Resume rules
 
@@ -70,6 +61,9 @@ Re-invoking the skill in a repo with an existing workflow directory resumes rath
    watchdog, having produced nothing — is the one case that may be retried without asking, up to
    two attempts. Record each attempt in `halt`. Every other halt goes back to the user, because
    every other halt is something an agent decided rather than something that happened to it.
+
+`commit` has no artifact file of its own. It is done when the branch's HEAD is a commit containing
+the work — check the git state, not the status field, and never commit twice.
 
 ## Multiple runs
 
