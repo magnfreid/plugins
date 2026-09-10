@@ -26,7 +26,7 @@ Both enter at step 0 and ask whatever is unclear before any planning happens.
 |---|---|
 | `skills/feature` | The orchestrator — state machine, gate, handoff, resume |
 | `skills/plan-format` | What makes a plan executable by an agent that won't push back |
-| `skills/pr-conventions` | Branch, commit, and PR body structure, and the voice for anything posted to GitHub |
+| `skills/pr-conventions` | Branch, commit, and PR body structure, and the voice for anything posted to GitHub or written as a code comment |
 | `skills/testing-doctrine` | What to test and why — stack-agnostic; the project supplies the patterns |
 | `skills/design-handoff` | Turning a design tool's output into shipped UI, and what to verify first |
 | `agents/workflow-planner` | Opus. Reads the repo, writes the plan, writes nothing else |

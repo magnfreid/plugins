@@ -1,18 +1,25 @@
 ---
 name: pr-conventions
-description: Branch naming, commit message style, pull request body structure, and the house voice for anything written into GitHub — PR bodies, review comments, inline comments, replies on someone else's PR. Use when creating a branch, writing a commit message, opening or updating a PR, or writing review feedback that will be posted.
+description: Branch naming, commit message style, pull request body structure, and the house voice for anything written into GitHub — PR bodies, review comments, inline comments, replies on someone else's PR — and for comments in source files. Use when creating a branch, writing a commit message, opening or updating a PR, writing review feedback that will be posted, or writing a comment in code.
 ---
 
 # Branch, commit, and PR conventions
 
-Defaults. A repository's own stated convention — CONTRIBUTING.md, a PR template, the existing
-history — always wins. Check `git log --oneline -20` before assuming.
+Defaults. A repository's own **stated** convention wins — CONTRIBUTING.md, a CLAUDE.md, a PR
+template, a commit prefix its history uses consistently. Check `git log --oneline -20` and the
+template before assuming.
 
-## Voice — anything posted to GitHub
+That deference is about **structure and format only**: which sections a body has, `feat/` versus
+`feature/`, whether ticket numbers appear. **Never infer length or register from what is already
+there.** The voice rules below are absolute, and a repository whose existing PR bodies, review
+comments or code comments are long is not setting a bar to match — matching it is how a verbose
+first PR becomes a verbose fiftieth. Write to the rules, not to the neighbours.
 
-Covers PR bodies, review summary comments, inline comments on a line, and replies on someone
-else's PR. Write for a junior developer who does not have your context: they should finish reading
-knowing what is wrong and what to do about it.
+## Voice — anything posted to GitHub, and comments in code
+
+Covers PR bodies, review summary comments, inline comments on a line, replies on someone else's
+PR, commit messages, and comments in source files. Write for a junior developer who does not have
+your context: they should finish reading knowing what is wrong and what to do about it.
 
 - **Be short.** A finding is two or three sentences. A body section is a short paragraph or a few
   bullets. Prose is fine, a wall of it is not. If a sentence would not change what the reader does,
@@ -39,6 +46,31 @@ A finding in this voice:
 
 What, what breaks, what to do — three sentences. Not: "Consider whether the caching strategy here
 correctly maintains coherence with the persistence layer following mutation operations."
+
+### Do not narrate how the change got here
+
+The reader is looking at the change in front of them, not its history. This applies to PR bodies
+and review replies as much as to code.
+
+- No recap of what an earlier PR did, what a review round changed, what was tried first, or why the
+  branch was rebased — unless the reader needs it to review *this* diff.
+- No defending the change against alternatives nobody proposed. "Why this way" earns a sentence
+  when it is genuinely non-obvious or departs from a convention, and nothing otherwise.
+- No process: no plans, no agents, no step numbers, no "as per the plan".
+- Superseded decisions live in the ADR or the commit that made them. Point at it; do not retell it.
+
+### Comments in source files
+
+A comment explains something the reader needs **now**, that the code cannot say itself: a
+non-obvious constraint, an ordering that matters, a workaround for behaviour outside your control.
+
+- Never explain a line by what it used to be, what it replaced, or which PR or review changed it.
+  That is what `git log` is for, and the comment goes stale the moment the code moves on.
+- Cite a decision record only where breaking the rule is a live temptation — not on every line the
+  record touched. One pointer beats five.
+- "X rather than Y" is worth writing only when someone would reach for Y and be wrong. Otherwise
+  describe X.
+- No comment beats a comment restating the code.
 
 ## Branches
 
