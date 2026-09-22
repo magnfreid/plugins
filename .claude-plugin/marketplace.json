@@ -7,7 +7,7 @@
     {
       "name": "dev-workflow",
       "source": "./plugins/dev-workflow",
-      "description": "End-to-end feature workflow \u2014 Opus plans, Sonnet implements, an independent reviewer checks, fixes land, a PR ships. Add --deep-review for a second, non-overlapping lens."
+      "description": "Two feature workflows \u2014 Opus plans, Sonnet implements, an independent reviewer checks, fixes land. feature stops at the diff; ship runs on to a pull request."
     },
     {
       "name": "flutter-toolkit",

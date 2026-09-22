@@ -1,10 +1,20 @@
 # dev-workflow
 
-The feature loop: **clarify → plan (Opus) → approve → implement (Sonnet) → review → fix → commit and
-push → hand over the diff.** Two stops — the plan, and the finished branch.
+**clarify → plan (Opus) → implement (Sonnet) → review → fix → commit and push.** Two flows share
+that spine and differ only in where they stop.
 
-It does not open a pull request. It ends with a pushed branch and a short report; Magnus reads the
-diff, says what he wants changed, and opens the PR himself when it is worth the team's time.
+| | `feature` | `ship` |
+|---|---|---|
+| Stops | the plan, and the finished branch | the clarifying questions, and nothing else |
+| Ends at | a pushed branch and a report | an open pull request |
+| Review effort | `code-review` at its default | `code-review` at `high` |
+| Tests | per `testing-doctrine` | every behavioural change, no exceptions |
+| Suits | work you want to read before anyone else does | projects where you review by running the app |
+
+Neither merges anything.
+
+Which one a project uses is stated in **its own `CLAUDE.md`**, not chosen per task. A repo that says
+nothing gets `feature`.
 
 ## Use it
 
@@ -16,15 +26,17 @@ or explicitly:
 
 ```
 /dev-workflow:feature paginate the order history screen
+/dev-workflow:ship paginate the order history screen
 ```
 
-Both enter at step 0 and ask whatever is unclear before any planning happens.
+All of them enter at step 0 and ask whatever is unclear before any planning happens.
 
 ## What's in here
 
 | Piece | Role |
 |---|---|
 | `skills/feature` | The orchestrator — state machine, gate, handoff, resume |
+| `skills/ship` | The same machine with no gates, ending at a pull request |
 | `skills/plan-format` | What makes a plan executable by an agent that won't push back |
 | `skills/pr-conventions` | Branch, commit, and PR body structure, and the voice for anything posted to GitHub or written as a code comment |
 | `skills/testing-doctrine` | What to test and why — stack-agnostic; the project supplies the patterns |
@@ -45,18 +57,29 @@ The corollary is that a run produces **one commit**. Implementation and review f
 because the review was part of writing the code rather than a change to it. Only what Magnus asks
 for after the handoff gets commits of its own.
 
-**The workflow stops before the PR.** A PR is a request for other people's attention, and only
-Magnus knows when the branch has earned it. So the run ends at a pushed branch with a report: what
-was built, what was verified, what was deferred, and the command to open the diff. What happens
-next — questions, revisions, and eventually a PR — is a conversation, not a step in a state
-machine.
+**`feature` stops before the PR.** A PR is a request for other people's attention, and on a team
+only Magnus knows when the branch has earned it. So the run ends at a pushed branch with a report:
+what was built, what was verified, what was deferred, and the command to open the diff.
+
+**`ship` does not, because the premise is different.** On a solo project reviewed by running the
+app, a pull request is not a request for attention — it is the artifact Magnus reads and merges,
+and stopping short of it just adds a step he has to perform by hand every time. What it buys in
+convenience it pays for in scrutiny, so `ship` raises the review effort and the testing bar to
+cover the read that is no longer happening. Both flows still refuse to merge.
+
+**A halt never becomes a pull request.** A PR says the branch is ready. `ship` halting with an
+honest report in chat is a good outcome; a PR that looks finished and is not costs a merge that
+has to be undone.
 
 **One review, run blind.** An agent cannot review code it just wrote; it defends the reasoning it
 already holds. The reviewer sees the diff and the plan and nothing about how the change was
-produced. It runs `code-review` at its default effort and adds the two checks that need the plan —
-conformance to the plan, and to the conventions the plan recorded. A change that deserves a harder
-look gets one because Magnus asks for it at the handoff, where he can see what he is deciding
-about, rather than because a flag was set before anyone had seen the code.
+produced. It runs the `code-review` skill and adds the two checks that need the plan — conformance
+to the plan, and to the conventions the plan recorded.
+
+One review, not two. `ship` raises that review's effort to `high` rather than adding a second
+standalone pass: `code-review` already runs inside the reviewer, and a second run over the same
+diff mostly re-finds what the first one found. Under `feature`, a change that deserves a harder
+look gets one because Magnus asks at the handoff, where he can see what he is deciding about.
 
 **File-based handoff.** Every step writes an artifact to `.claude/workflow/<slug>/`. Subagents
 return summaries, not context — so the plan the implementer reads is the plan on disk, not a
