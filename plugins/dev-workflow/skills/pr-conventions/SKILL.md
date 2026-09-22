@@ -111,9 +111,12 @@ Body only when the *why* is not obvious from the diff.
 
 ## PR body
 
-Magnus opens the pull request, by hand, when the branch is worth the team's time. Keep the body
-about the change — a reviewer wants to know what it does and what to look at, not what process
-produced it.
+Who opens the pull request depends on the workflow — `dev-workflow:feature` hands the branch to
+Magnus and he opens it; `dev-workflow:ship` opens it itself. The body is the same either way.
+
+Keep it about the change: a reviewer wants to know what it does and what to look at, not what
+process produced it. **Assume it is the only description of the change anyone reads.** On a
+project where nobody reviews the diff line by line, it is.
 
 ```markdown
 ## What
@@ -127,7 +130,13 @@ goes here with its reason.
 Build: clean, from scratch — or: incremental, so no claim about warnings.
 - [x] fvm dart analyze
 - [x] fvm flutter test (48 passed)
-- [ ] Manual: pagination on a slow connection — not automatable
+
+## Test plan
+Numbered steps to try it in the running app, in the order a person would do them, each with what
+should happen. Enough for someone who has not read the diff.
+1. Open Order history with more than 20 orders. The first 20 load.
+2. Scroll to the bottom. The next 20 append; the list does not jump.
+3. Turn off the network and scroll again. The cached page stays; no spinner hangs.
 
 ## Notes
 Only what a reviewer would not guess from the diff: a known gap left in on purpose, a follow-up
@@ -135,8 +144,9 @@ worth filing, and **any edit no human made** — an SDK migrator, codegen output
 a bulk find/replace across platform folders.
 ```
 
-Drop a section that has nothing in it rather than writing "N/A". Four short sections beat four
-long ones; a body nobody finishes reading is a body that hid something.
+Drop a section that has nothing in it rather than writing "N/A" — except **Test plan**, which a
+change with any user-visible behaviour always has. Five short sections beat five long ones; a body
+nobody finishes reading is a body that hid something.
 
 ## Rules
 
