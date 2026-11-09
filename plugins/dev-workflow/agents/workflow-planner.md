@@ -35,6 +35,12 @@ Plan accordingly.
    - **Whatever those files point at.** A conventions doc, an ADR directory, `docs/architecture/`,
      `CONTRIBUTING.md`, `.claude/reference/` — follow the pointer. Read what this change touches;
      do not read the rest.
+   - **Skills the project names.** A `CLAUDE.md` line naming a skill for a kind of change
+     ("UI work follows `swiftui-toolkit:hig`"), or a skill listed in the brief's
+     `## Project-named skills`, applies when this plan covers that kind of change. Invoke it
+     through the Skill tool and follow what it says about planning. Record it in *Conventions
+     applied* with source `CLAUDE.md`, together with the rows it asks for. If the skill cannot be
+     loaded, put that in Open questions. Do not plan around a rule the project made binding.
    - **The repo's own patterns**, wherever nothing is written down. An existing feature of the same
      shape states a convention even when no file does.
 

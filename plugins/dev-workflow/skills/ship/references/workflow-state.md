@@ -43,6 +43,10 @@ cleared when that step later succeeds.
 `implementer` is chosen by the orchestrator from the finished plan, not confirmed by Magnus —
 there is no gate at which to confirm it.
 
+`briefSource` is optional and absent on a normal run. When the run started from a pre-approved
+brief, it holds the text after `Approved:`. With a pre-approved brief, `clarify` is done as soon as
+`brief.md` exists, the same rule as any other step.
+
 `pr` holds the pull request URL once it exists, and is absent until then. It is the one field that
 proves the run finished: a `pr` step marked `done` with no URL is not done.
 

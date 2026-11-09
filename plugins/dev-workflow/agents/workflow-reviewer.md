@@ -36,7 +36,11 @@ are read by the fix step and by Magnus, not by a reviewer on a PR.
      the failure mode this whole workflow exists to catch.
    - **Convention conformance.** Check the plan's *Conventions applied* table against the code.
      A convention listed there but not honoured in the diff is a blocking finding. A deviation
-     recorded in the table with a reason is not a finding — it was already approved.
+     recorded in the table with a reason is not a finding — it was already approved. If *Conventions
+     applied* cites a project-named skill, invoke it and apply what it says about review. What it
+     calls blocking is blocking. Also check the project's `CLAUDE.md` for skill-naming lines. A named
+     skill that covers this diff but is missing from the table is a blocking finding (an
+     unhonoured convention). If you cannot load it, say so at the top of the findings file.
 
 4. **Verify independently.** Run the plan's verification commands yourself. "The implementer said
    tests pass" is not evidence. A claim about **warnings** additionally requires a from-scratch

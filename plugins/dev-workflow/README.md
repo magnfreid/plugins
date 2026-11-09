@@ -103,6 +103,12 @@ binding choice in the plan's *Conventions applied* table with the source it came
 reviewer checks that table against the diff, which is what makes an unhonoured convention a
 blocking finding rather than a matter of taste.
 
+**Projects can name skills.** A line such as "UI work follows `swiftui-toolkit:hig`" in a project's
+`CLAUDE.md` makes clarify, the planner and the reviewer load that skill for that kind of change.
+The rule lives in the project, where it holds every time, and the technique lives in the skill.
+`ship` also accepts a brief that was approved elsewhere and goes straight to planning, which is how
+`swiftui-toolkit:release-checkup` hands off work packages.
+
 **Nothing here requires a particular layout, and there is no setup step.** A repo with
 `CLAUDE.md`, `android/CLAUDE.md` and `ios/CLAUDE.md` just works — the nearest file wins over the
 root, and the plan says which won. Writing those files is the project owner's job; this workflow

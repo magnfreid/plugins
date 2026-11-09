@@ -1,6 +1,6 @@
 {
   "name": "dev-workflow",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "Plan with Opus, implement with Sonnet, review blind, fix, commit and push — stack-agnostic. Two flows: feature stops at the diff for you to read, ship runs to a pull request after one round of questions.",
   "author": {
     "name": "Magnus"
