@@ -22,7 +22,8 @@ every invocation, look for an unfinished run in any earlier directory before cre
 files, the `state.json` shape and the resume rules. **A step counts as done only if its file
 exists.** Never mark a step complete from memory.
 
-On first run in a repo, append `.claude/workflow/` to `.git/info/exclude`. The fix sessions stage
+On first run in a repo, append `.claude/workflow/` to `$(git rev-parse --git-common-dir)/info/exclude`
+— in a linked worktree `.git` is a file, not a directory. The fix sessions stage
 with `git add -A`, and an unexcluded workflow directory rides along into their commits.
 
 ## Step 1 — Scope
@@ -110,7 +111,9 @@ packages touch the same files, and `ship` branches from a fresh `origin/<base>`.
 both changes on the same files from the same base, and one of them conflicts.
 
 If the flags are missing, or a launch exits non-zero, print the same command for that package and
-every remaining one, and mark them `printed`.
+every other package in the current wave, and mark them `printed`. **Chained packages stay
+`waiting` and their commands are not printed yet** — a command on screen is one that gets run
+early. Re-invoking after the merge prints them.
 
 Write `launches.md`: per package, the session id or command, and what it waits on. Tell Magnus
 `claude agents` lists the sessions and `claude attach <id>` opens one that halted or is waiting on a

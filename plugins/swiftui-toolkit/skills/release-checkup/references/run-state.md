@@ -79,7 +79,7 @@ the same as ship.
 **Files a fix touches:** `Sources/Checkout/CartStore.swift`
 ```
 
-A file with nothing to report has the single line `No findings.` A file ends with an
+A file with nothing to report has the line `No findings.` and then its `## Not checked` section. A file ends with an
 `## Not checked` section listing anything the area asks for that the auditor could not check, and
 why (for example "build warnings: no scheme builds without signing"). That section is required
 even when empty, and then it reads `Nothing.`
@@ -128,6 +128,9 @@ Base branch: <base branch>
 - <each finding in the package: ID, file:line, the fix direction the auditor gave>
 - <any decision Magnus made at approval>
 
+## Project-named skills
+- <each skill `scope.md` recorded from `CLAUDE.md`, and the kind of change it covers — or "none">
+
 ## Out of scope
 - <the other packages' findings that touch nearby code>
 - Anything not listed above.
@@ -146,7 +149,8 @@ than restarts. With more than one unfinished run, ask which to resume.
 4. When resuming after `launch`, for each package with a `session` or a printed command, look up
    its PR with `gh pr list --state all --head feature/<slug> --json url,state` and then
    `--head fix/<slug>`. Record `pr` and move the status to `pr-open` or `merged`.
-5. Launch every `waiting` package whose predecessors are all `merged`.
+5. Launch every `waiting` package whose predecessors are all `merged` — or, when the launch
+   flags are missing, print its command now and mark it `printed`.
 6. Report what is still waiting, and on what.
 
 ## Multiple runs

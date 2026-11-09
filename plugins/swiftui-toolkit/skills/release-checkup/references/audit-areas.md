@@ -44,7 +44,11 @@ flags and preview or mock data reachable in release; leftover `print`s.
 - `#if DEBUG` balance.
 - Mock or preview types referenced outside `#Preview` / `#if DEBUG`.
 - **Build warnings need a from-scratch build:**
-  `xcodebuild -scheme <scheme> -configuration Release -destination 'generic/platform=iOS Simulator' -derivedDataPath "${TMPDIR:-/tmp}/release-checkup-dd" clean build CODE_SIGNING_ALLOWED=NO 2>&1 | grep -E 'warning:|error:|BUILD (SUCCEEDED|FAILED)'`.
+  `xcodebuild -scheme <scheme> -configuration Release -destination 'generic/platform=<platform>' -onlyUsePackageVersionsFromResolvedFile -derivedDataPath "${TMPDIR:-/tmp}/release-checkup-dd" clean build CODE_SIGNING_ALLOWED=NO 2>&1 | grep -E 'warning:|error:|BUILD (SUCCEEDED|FAILED)'`.
+  Run it once per platform in `scope.md`, with `<platform>` as `iOS Simulator`, `macOS`,
+  `watchOS Simulator`, `tvOS Simulator` or `visionOS Simulator`. A hardcoded iOS destination fails
+  every app that does not build for iOS.
+  `-onlyUsePackageVersionsFromResolvedFile` stops the build rewriting `Package.resolved`.
   No `BUILD SUCCEEDED` line means it did not build: record why under `Not checked`.
 - Deprecated APIs: the build warnings, plus `doc-text.py` from `swiftui-toolkit:hig` on any
   suspicious API page.
@@ -101,7 +105,7 @@ Cite the HIG slug in every finding.
 test gaps on critical paths; release build configuration.
 
 **Starting points:**
-- `xcodebuild -showBuildSettings -scheme <scheme> -configuration Release` (read-only) for
+- `xcodebuild -showBuildSettings -scheme <scheme> -configuration Release -onlyUsePackageVersionsFromResolvedFile` (read-only) for
   `MARKETING_VERSION`, `CURRENT_PROJECT_VERSION`, optimisation and
   `SWIFT_ACTIVE_COMPILATION_CONDITIONS`.
 - Compare the version with the latest git tag.
