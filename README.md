@@ -15,6 +15,7 @@ Then install any plugin from it:
 ```
 /plugin install dev-workflow@magnus-plugins
 /plugin install flutter-toolkit@magnus-plugins
+/plugin install swiftui-toolkit@magnus-plugins
 ```
 
 ## Plugins
@@ -23,8 +24,9 @@ Then install any plugin from it:
 | --- | --- |
 | [dev-workflow](./plugins/dev-workflow) | The feature loop — plan with Opus, approve once, implement, review independently, fix, ship a PR. Stack-agnostic. |
 | [flutter-toolkit](./plugins/flutter-toolkit) | Tool-specific Flutter skills — BLoC, Dio, go_router, gen-l10n, theming, testing. |
+| [swiftui-toolkit](./plugins/swiftui-toolkit) | SwiftUI procedure — HIG and native components at every workflow step, from the live guidelines, and a pre-release audit. |
 
-## Why there is no native toolkit
+## Why the native toolkits were deleted, and why swiftui-toolkit is different
 
 There was one for SwiftUI and one for Compose. Both were deleted, because they documented the
 conventional way to use those frameworks — which is what a model does by default. A skill earns its
@@ -35,7 +37,11 @@ The handful of things that genuinely surprise — OSLog interpolation being publ
 Nav3 needing `rememberViewModelStoreNavEntryDecorator()` — are lines in a project's `CLAUDE.md`,
 not a plugin.
 
-## How the two plugins differ
+`swiftui-toolkit` stores none of Apple's guidance. It fetches the HIG live and carries procedure:
+when to check the guidelines during a change, and how to audit before a release. That passes the
+same test, because what it encodes is how to work, not what the framework is.
+
+## How the plugins differ
 
 `dev-workflow` is a **procedure** — multi-step, order matters, and a failure is visible. That is
 what a skill is good at.
@@ -57,6 +63,9 @@ That split is the design:
 
 The test for which side a new thing belongs on: *if this doesn't load, does something silently go
 wrong?* If yes, it is a decision, and it is not a skill.
+
+`swiftui-toolkit` is procedure for SwiftUI projects. It plugs into `dev-workflow` through a line in
+the project's `CLAUDE.md`, and it holds no decisions either.
 
 ## Repo layout
 

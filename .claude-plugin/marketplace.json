@@ -13,6 +13,11 @@
       "name": "flutter-toolkit",
       "source": "./plugins/flutter-toolkit",
       "description": "Tool-specific Flutter skills \u2014 BLoC, Dio, go_router, gen-l10n, theming, testing. How to use each, once your CLAUDE.md has decided to."
+    },
+    {
+      "name": "swiftui-toolkit",
+      "source": "./plugins/swiftui-toolkit",
+      "description": "SwiftUI skills — HIG and native components at every workflow step, from the live guidelines, and a pre-release audit that hands fixes to ship."
     }
   ]
 }

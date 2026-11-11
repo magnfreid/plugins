@@ -1,7 +1,7 @@
 ---
 name: ship
 description: Run the feature workflow end to end — clarify the requirement, plan it with Opus, implement with Sonnet, review it from a fresh context, apply fixes, commit, push, and open the pull request. One interaction, at the start. Use whenever Magnus wants to build, add, change, fix, or refactor something in a repo whose CLAUDE.md names this workflow — "I want to implement X", "add X to the app", "fix the bug where X" — or when invoked directly as /dev-workflow:ship. Opens the PR; never merges it.
-argument-hint: [what you want to build or fix]
+argument-hint: [what you want to build or fix, or the path to an approved brief]
 ---
 
 # Ship workflow
@@ -65,6 +65,21 @@ commit and then into the PR.
 
 ## Step 0 — Clarify
 
+**A pre-approved brief skips the conversation.** The argument is a pre-approved brief when it is
+the path of an existing file whose first ten lines contain a line starting `Approved:`. Anything
+else is a normal request. Optional header lines in those first ten lines:
+
+- `Slug: <slug>`: use it as the run slug, which names the workflow directory and the branch
+  `feature/<slug>` or `fix/<slug>`.
+- `Base branch: <name>`: use it as the base. After `git fetch`, create the branch from
+  `origin/<name>`, and open the PR against `<name>`.
+
+Copy the file to `brief.md` as given, set `briefSource` in `state.json` to the text after
+`Approved:`, mark `clarify` done, and go straight to step 1 without asking anything. The brief was
+approved where it was written, by `swiftui-toolkit:release-checkup` for example. Asking again would
+undo the approval. **The planner's open questions still halt the run**, exactly as in step 1. A
+pre-approved brief settles scope, not the questions the repo raises.
+
 The only conversation in the run. It is doing the job two gates used to do, so do it properly.
 
 Ask about anything you cannot answer from the request and the repo: scope boundaries, behaviour at
@@ -79,6 +94,14 @@ you defer here is one that gets made without him.
 If the input is a **design handoff** — a `design/<screen>/` folder, a prototype, a mockup — load
 `dev-workflow:design-handoff` now. Handoffs assert behaviour the app does not have and smuggle
 product decisions in as visual ones. Those are step 0 questions.
+
+**Project-named skills.** Read the project's `CLAUDE.md` (the root and the one nearest the
+change) for lines naming a skill for a kind of change, for example "UI work follows
+`swiftui-toolkit:hig`". If this change is of that kind, load the skill now and do what it asks of
+the clarify step. Its questions join the same batch. List the skills you loaded in `brief.md` under
+`## Project-named skills`, so the planner and reviewer see them too. If a named skill is not
+installed, say so in the batch. A project rule that cannot load is Magnus's call, not something to
+skip silently.
 
 Write `brief.md`: the objective, the decisions taken in this conversation, and an explicit
 out-of-scope list. Then go, without confirming.
@@ -109,7 +132,10 @@ plan, not the request. Record it in `state.json` as `implementer`.
 2. Confirm the working tree is clean. If it is not, stop and ask — never start on top of
    uncommitted work.
 3. Record the base branch, then create `feature/<slug>` (or `fix/<slug>`). **Never work on the
-   default branch.**
+   default branch.** When the brief named a `Base branch:`, that is the base. Branch from
+   `origin/<base>` after the fetch, whatever is checked out, and record `origin/<base>` as the base
+   ref passed to the reviewer, since local `<base>` may be stale. A session started in a fresh worktree
+   is not on the base branch.
 4. Spawn **workflow-executor** with the path to `plan.md`, on the chosen model.
 5. When it returns, run the plan's verification commands yourself. Do not take its word for it.
 6. `git add -A`. **Stage, do not commit.** The commit comes after the review, so a clean run
@@ -173,6 +199,8 @@ read:
 - **Written for a junior developer who was not in the conversation** — plain words, what changed
   and what to look at, no pattern names used as shorthand.
 
+The PR targets the recorded base branch.
+
 Then record the URL in `state.json` and report it in chat with:
 
 - What was built, in a line or two.
@@ -184,10 +212,20 @@ Then record the URL in `state.json` and report it in chat with:
 **Never merge, and never enable auto-merge.** Merging is the decision this whole workflow exists
 to hand to Magnus.
 
+**Release the branch.** If this run is in a linked worktree — `git rev-parse --git-dir` differs
+from `git rev-parse --git-common-dir` — run `git switch --detach` once the PR is open and say so
+in the report. Git refuses to check out a branch that another worktree holds, and Magnus tests by
+checking the branch out in his own checkout. In the main checkout, leave it: the branch is already
+where he is.
+
 **Revisions** — bugs he finds in the running app, changes he asks for — are implemented directly
 on the same branch and pushed as their own commits, named for what changed. You have the context;
 a round of small agreed changes does not need the planner. Re-run verification each time. If a
 request is large enough to be a different feature, say so and start a new run.
+
+Before a revision in a worktree, `git switch <branch>` back onto it. If that fails because Magnus
+has the branch checked out, stop and ask — never commit on a detached HEAD — and detach again
+once the revision is pushed.
 
 ## Failure handling
 

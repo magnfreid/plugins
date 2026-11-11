@@ -1,0 +1,8 @@
+{
+  "name": "swiftui-toolkit",
+  "version": "0.1.0",
+  "description": "SwiftUI skills that are procedure, not restated guidance — follow Apple's Human Interface Guidelines from the live docs at every workflow step, and audit an app before release.",
+  "author": {
+    "name": "Magnus"
+  }
+}

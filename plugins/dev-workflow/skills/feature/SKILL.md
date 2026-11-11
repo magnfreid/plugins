@@ -76,8 +76,16 @@ If the input is a **design handoff** — a `design/<screen>/` folder, a prototyp
 behaviour the app does not have, and smuggle product decisions in as visual ones. Those are step 0
 questions, not something to discover mid-implementation.
 
-Write `brief.md`: the objective, the decisions made in this conversation, and an explicit
-out-of-scope list. Confirm nothing — go straight on to planning.
+**Project-named skills.** Read the project's `CLAUDE.md` (the root and the one nearest the
+change) for lines naming a skill for a kind of change, for example "UI work follows
+`swiftui-toolkit:hig`". If this change is of that kind, load the skill now and do what it asks of
+the clarify step. Its questions join the same batch. List the skills you loaded in `brief.md` under
+`## Project-named skills`, so the planner and reviewer see them too. If a named skill is not
+installed, say so in the batch. A project rule that cannot load is Magnus's call, not something to
+skip silently.
+
+Write `brief.md`: the objective, the decisions made in this conversation, the project-named
+skills that applied, and an explicit out-of-scope list. Confirm nothing — go straight on to planning.
 
 ## Step 1 — Plan
 
