@@ -9,9 +9,10 @@ that spine and differ only in where they stop.
 | Ends at | a pushed branch and a report | an open pull request |
 | Review effort | `code-review` at its default | `code-review` at `high` |
 | Tests | per `testing-doctrine` | every behavioural change, no exceptions |
+| Slow tests | compiled every round, run once when you say it has settled | the same, and always before a merge |
 | Suits | work you want to read before anyone else does | projects where you review by running the app |
 
-Neither merges anything.
+Neither merges on its own. `ship` merges when Magnus asks, after the full suite has passed on the branch's HEAD; `feature` never merges.
 
 Which one a project uses is stated in **its own `CLAUDE.md`**, not chosen per task. A repo that says
 nothing gets `feature`.
@@ -65,11 +66,17 @@ what was built, what was verified, what was deferred, and the command to open th
 app, a pull request is not a request for attention — it is the artifact Magnus reads and merges,
 and stopping short of it just adds a step he has to perform by hand every time. What it buys in
 convenience it pays for in scrutiny, so `ship` raises the review effort and the testing bar to
-cover the read that is no longer happening. Both flows still refuse to merge.
+cover the read that is no longer happening. Neither merges on its own initiative.
 
 **A halt never becomes a pull request.** A PR says the branch is ready. `ship` halting with an
 honest report in chat is a good outcome; a PR that looks finished and is not costs a merge that
 has to be undone.
+
+**Slow tests run once, when the change has settled.** UI, integration, and instrumented tests are
+written with the code and compiled on every round. Only the fast tests run until Magnus says the
+change is done. Re-running a UI suite after every small change takes most of each round's
+wall-clock time, and it catches nothing that one run at the end would miss. `ship` will not merge
+until that run has passed on the commit being merged.
 
 **One review, run blind.** An agent cannot review code it just wrote; it defends the reasoning it
 already holds. The reviewer sees the diff and the plan and nothing about how the change was

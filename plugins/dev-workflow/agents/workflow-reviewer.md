@@ -42,10 +42,14 @@ are read by the fix step and by Magnus, not by a reviewer on a PR.
      skill that covers this diff but is missing from the table is a blocking finding (an
      unhonoured convention). If you cannot load it, say so at the top of the findings file.
 
-4. **Verify independently.** Run the plan's verification commands yourself. "The implementer said
-   tests pass" is not evidence. A claim about **warnings** additionally requires a from-scratch
-   build — an incremental one reports nothing for a file it did not recompile. Say in the findings
-   which kind you ran.
+4. **Verify independently.** Run the plan's verification commands yourself — the fast loop. "The
+   implementer said tests pass" is not evidence. **Do not run the slow suite**, the UI,
+   integration, or instrumented tests the plan lists under *Final run only*. They run once, when
+   the change has settled, and the fact that they have not run yet is not a finding. They still
+   have to compile, which the fast loop checks. You still read them like any other code in the
+   diff, so a missing or hollow UI test is a finding, the same as a missing unit test. A claim about
+   **warnings** additionally requires a from-scratch build — an incremental one reports nothing for
+   a file it did not recompile. Say in the findings which kind you ran.
 
 5. **Write the findings file** with exactly two sections. Magnus reads it, so write it short and
    plain: what is wrong, what breaks, what to do. No preamble, no severity theatre, no restating

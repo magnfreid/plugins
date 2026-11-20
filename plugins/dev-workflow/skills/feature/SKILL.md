@@ -10,7 +10,7 @@ Two stops: the plan, and the finished diff. Between them the work runs unattende
 second one, Magnus decides what the team sees.
 
 ```
-clarify → PLAN → [approve] → branch + implement → review → fix → commit + push → [read the diff] → revise
+clarify → PLAN → [approve] → branch + implement → review → fix → commit + push → [read the diff] → revise → [settled] → final run
 ```
 
 **Do not use this for:** a one-line change, a question about the code, exploration, or anything
@@ -43,7 +43,7 @@ from the objective (`order-history-pagination`).
 
 | File | Written by | Contains |
 |---|---|---|
-| `state.json` | orchestrator | step statuses, branch, base, stack |
+| `state.json` | orchestrator | step statuses, branch, base, stack, verification, the final run |
 | `brief.md` | orchestrator | the clarified requirement |
 | `plan.md` | workflow-planner | the approved plan |
 | `review.md` | workflow-reviewer | blocking and non-blocking findings |
@@ -89,10 +89,11 @@ skills that applied, and an explicit out-of-scope list. Confirm nothing — go s
 
 ## Step 1 — Plan
 
-Detect the stack first (`references/stack-detection.md`), record it in `state.json`.
+Detect the stack first (`references/stack-detection.md`) and record it in `state.json`, with its
+fast loop as `verification` and its slow suite, if it has one, as `slowSuite`.
 
 Spawn **workflow-planner** (Opus). Give it: the path to `brief.md`, the path to write `plan.md`,
-the detected stack, and the repo root. Nothing else — it reads what it needs.
+the detected stack and its slow suite, and the repo root. Nothing else — it reads what it needs.
 
 ## Gate — the approval
 
@@ -130,6 +131,12 @@ apart.
 warnings for a file it did not recompile, which is how "builds clean" ends up in a report untrue.
 Incremental is fine for "tests pass". It is not evidence about warnings. Record which kind you ran.
 
+**Verification means the fast loop, here and in every round after.** Build, analyze, compile every
+test target, run the fast tests. Do not run the slow suite, the UI, integration, and instrumented
+tests that drive a simulator or a device. They are written with the code and compiled every round,
+and they run once, in step 7, when Magnus says the change has settled. That holds for the
+reviewer's verification, the fix round's, and every revision's.
+
 **Hard stop:** if verification fails, stop here and report. **Hard stop:** if the executor reports
 missing or contradictory plan information, that is a plan defect — take it back to the user, not
 into a guess.
@@ -140,6 +147,9 @@ Spawn **workflow-reviewer** with the base ref and the paths to `plan.md` and `re
 the staged diff — `git diff --cached <base>` — because nothing is committed yet. It gets no other
 context about how the change was made; that independence is the entire value of this step, so do
 not summarize the implementation into its prompt.
+
+Pass it the `slowSuite` from `state.json`, if there is one, so it knows which suite not to run. It
+still reads those tests. It just does not execute them.
 
 It writes its findings to `review.md` and returns the blocking count. That file is for step 4 and
 for your report at the handoff. It goes nowhere else.
@@ -190,6 +200,9 @@ Stop and report. Keep it to what Magnus needs in order to read the diff:
 - The branch, and `git diff <base>...HEAD` so he can open it in one paste.
 - One or two lines on what was built.
 - Verification: what ran, which build kind backs any warnings claim.
+- The slow suite, if there is one: compiled, not run, and how to run it — "say *run the tests*
+  when it has settled". Never leave this out. A handoff that says nothing about it reads as though
+  the whole suite passed.
 - Deferred non-blocking findings, one line each — this is the only place they surface, so do not
   drop them.
 - Anything a reader would not predict from the diff: a codegen pass, a bulk rename, a dependency
@@ -205,6 +218,36 @@ changed.
 If a request is large enough to be a different feature, say so and start a new run rather than
 growing this one.
 
+## Step 7 — The final run
+
+The slow suite runs once, when Magnus says the change has settled: "run the tests", "ready to
+merge", "looks good, let's finish", or any request to open the pull request or merge it. Never on
+your own initiative, and never because a round finished.
+
+1. Confirm you are on the branch and the tree is clean, and note `git rev-parse HEAD`.
+2. If `fullRun` is `passed` and its `sha` is that HEAD, it has already run. Say so and stop.
+3. Run `verification`, then `slowSuite.commands`. With no `slowSuite`, `verification` alone is the
+   final run.
+4. Record `fullRun` in `state.json`: the HEAD, `passed` or `failed`, and the time.
+
+**Green:** report the suite, the result, and the short SHA it passed on. That is the commit he
+opens the pull request on.
+
+**Red:** fix it on the branch the way you would a revision: a commit named for what changed, a
+push, then back to step 1. A failing test has two possible culprits, the code and the test. Fixing
+the code to do what the brief and plan specified is a fix. Changing a test's assertion to match
+what the code does now is a behaviour decision. **Halt** and take it to Magnus, as for any failure
+that needs a design or behaviour call. After two fix rounds with the suite still red, halt.
+
+If no simulator, emulator, or device is available, the final run cannot pass. Say so, record
+nothing as passed, and do not call the change settled.
+
+**A commit after a green run makes it stale.** A revision after it goes through the fast loop like
+any other, and the next "ready to merge" runs the slow suite again.
+
+This workflow does not merge, any more than it opens the pull request. Asked to, run the final
+run, report it green on its SHA, and leave the merge to him.
+
 The workflow ends here. Magnus opens the pull request when he decides the branch is worth the
 team's time.
 
@@ -219,8 +262,8 @@ nothing. Not a finding. **Resume it by message**, which preserves its transcript
 spawning a fresh one and paying for the context again. Two attempts, then halt and report.
 
 **Judgment needed** — the reviewer returns `ESCALATE`, the executor hits missing or contradictory
-plan information, verification fails, the tree is dirty, the push is rejected. **Halt.** The state
-file records where, and the user decides.
+plan information, verification fails, the final run stays red or needs a behaviour call, the tree
+is dirty, the push is rejected. **Halt.** The state file records where, and the user decides.
 
 **Everything else** — keep going to the handoff. That is what the approval bought.
 
