@@ -1,6 +1,6 @@
 ---
 name: ship
-description: Run the feature workflow end to end — clarify the requirement, plan it with Opus, implement with Sonnet, review it from a fresh context, apply fixes, commit, push, and open the pull request. One interaction, at the start. Use whenever Magnus wants to build, add, change, fix, or refactor something in a repo whose CLAUDE.md names this workflow — "I want to implement X", "add X to the app", "fix the bug where X" — or when invoked directly as /dev-workflow:ship. Opens the PR; never merges it.
+description: Run the feature workflow end to end — clarify the requirement, plan it with Opus, implement with Sonnet, review it from a fresh context, apply fixes, commit, push, and open the pull request. One interaction, at the start. Use whenever Magnus wants to build, add, change, fix, or refactor something in a repo whose CLAUDE.md names this workflow — "I want to implement X", "add X to the app", "fix the bug where X" — or when invoked directly as /dev-workflow:ship. Opens the PR, and merges it only when Magnus asks and the full test suite has passed on the branch's HEAD.
 argument-hint: [what you want to build or fix, or the path to an approved brief]
 ---
 
@@ -10,10 +10,10 @@ One stop, at the beginning. Everything after the clarifying questions runs unatt
 a pull request Magnus can read and merge.
 
 ```
-clarify → plan → branch + implement → review → fix → commit + push → PR
+clarify → plan → branch + implement → review → fix → commit + push → PR → revise → [settled] → final run → merge, if asked
 ```
 
-This is `dev-workflow:feature` with the two gates removed and the PR added. Everything else —
+This is `dev-workflow:feature` with the two gates removed, and the PR added — and, when Magnus asks for it, the merge. Everything else —
 the planner, the executor, the reviewer, the plan format, the conventions, the state files — is
 identical, and where this file is silent, `feature`'s rules apply.
 
@@ -33,8 +33,9 @@ questions there. Everything downstream is recoverable through the PR — Magnus 
 and a rejected branch costs one run.
 
 **It opens the PR.** Not a draft. A PR nobody has read is still the thing being asked for: Magnus
-merges it, or he runs the app, finds a bug, and reports it. **Never merge it yourself**, and never
-enable auto-merge.
+merges it, or he runs the app, finds a bug, and reports it. **Never merge it on your own
+initiative.** Merge only when he asks, and only after the full suite has passed on the current
+HEAD (step 7). Never enable auto-merge.
 
 **The review is harder, because no human reads the diff.** Tell `workflow-reviewer` to invoke the
 `code-review` skill at **`high`** effort rather than its default. That is one line in its prompt.
@@ -45,7 +46,9 @@ and a second run over the same diff mostly re-finds what the first one found.
 assert, but the bar for *whether* is raised: **every behavioural change ships with a test that
 would fail without it.** Say this in the planner's prompt so it lands in the plan, and treat a
 missing test as a blocking finding at review. Pure refactors with existing coverage, formatting,
-and documentation are exempt — nothing about their behaviour changed.
+and documentation are exempt — nothing about their behaviour changed. Written is not the same as run every round. UI and other slow tests are compiled
+on every round and run once, when the change has settled, in step 7. The bar is that the test
+exists.
 
 **The PR body carries a manual test plan.** Numbered steps Magnus can follow in the running app,
 because that is how he reviews. See `dev-workflow:pr-conventions`.
@@ -109,10 +112,11 @@ out-of-scope list. Then go, without confirming.
 ## Step 1 — Plan
 
 Detect the stack first — `../feature/references/stack-detection.md`, shared with `feature` so a new
-stack is added in one place — and record it in `state.json`.
+stack is added in one place — and record it in `state.json`, with its fast loop as `verification`
+and its slow suite, if it has one, as `slowSuite`.
 
 Spawn **workflow-planner** (Opus) with: the path to `brief.md`, the path to write `plan.md`, the
-detected stack, the repo root, and the raised testing bar above. Nothing else — it reads what it
+detected stack and its slow suite, the repo root, and the raised testing bar above. Nothing else — it reads what it
 needs.
 
 **Open questions are the one thing that can pull Magnus back in.** If the plan comes back with a
@@ -146,6 +150,12 @@ plan, not the request. Record it in `state.json` as `implementer`.
 warnings for a file it did not recompile. Incremental is fine for "tests pass". Record which you
 ran; it goes in the PR body.
 
+**Verification means the fast loop, here and in every round after.** Build, analyze, compile every
+test target, run the fast tests. Do not run the slow suite, the UI, integration, and instrumented
+tests that drive a simulator or a device. They are written with the code and compiled every round,
+and they run once, in step 7, when Magnus says the change has settled. That holds for the
+reviewer's verification, the fix round's, and every revision's.
+
 **Hard stop** if verification fails. **Hard stop** if the executor reports missing or contradictory
 plan information — that is a plan defect, and it goes back to Magnus rather than into a guess.
 
@@ -156,7 +166,9 @@ instruction to run `code-review` at **`high`**. It reads the staged diff — `gi
 <base>` — and gets no other context about how the change was made. That independence is the whole
 value of the step: do not summarize the implementation into its prompt.
 
-Add one item to its brief: **a behavioural change with no test is a blocking finding.**
+Add one item to its brief: **a behavioural change with no test is a blocking finding.** That
+includes a UI test that is missing or hollow. Pass it the `slowSuite` from `state.json`, if there
+is one, so it knows which suite not to run.
 
 If it returns `ESCALATE`, stop. Report to Magnus; the work stays staged and uncommitted on the
 branch. An architectural problem is not a fix task, and it is not something to open a PR about.
@@ -201,16 +213,27 @@ read:
 
 The PR targets the recorded base branch.
 
+**The slow suite goes in Verification as an unchecked box**, because it has not run yet:
+
+```markdown
+- [ ] UI tests (XCUITest) — deferred until the change settles
+```
+
+The label is `slowSuite.name`. Step 7 checks the box. With no `slowSuite` there is no line.
+
 Then record the URL in `state.json` and report it in chat with:
 
 - What was built, in a line or two.
 - Verification: what ran, and which build kind backs any warnings claim.
+- The slow suite, if there is one: compiled, not run, and how to run it — "say *run the tests* or
+  *ready to merge* when it has settled".
 - Deferred non-blocking findings, one line each. This is the only place they surface.
 - Anything a reader would not predict from the diff — a codegen pass, a bulk rename, a dependency
   that came along.
 
-**Never merge, and never enable auto-merge.** Merging is the decision this whole workflow exists
-to hand to Magnus.
+**Never merge on your own initiative, and never enable auto-merge.** Merging is Magnus's decision.
+A finished run, a green suite, or a PR nobody has commented on is not him asking. When he does
+ask, step 7 is how it happens.
 
 **Release the branch.** If this run is in a linked worktree — `git rev-parse --git-dir` differs
 from `git rev-parse --git-common-dir` — run `git switch --detach` once the PR is open and say so
@@ -220,12 +243,68 @@ where he is.
 
 **Revisions** — bugs he finds in the running app, changes he asks for — are implemented directly
 on the same branch and pushed as their own commits, named for what changed. You have the context;
-a round of small agreed changes does not need the planner. Re-run verification each time. If a
-request is large enough to be a different feature, say so and start a new run.
+a round of small agreed changes does not need the planner. Re-run verification each time. If the
+PR body's slow-suite box is checked, the revision makes it stale. Put the unchecked line back with
+`gh pr edit` in the same round. If a request is large enough to be a different feature, say so and
+start a new run.
 
 Before a revision in a worktree, `git switch <branch>` back onto it. If that fails because Magnus
 has the branch checked out, stop and ask — never commit on a detached HEAD — and detach again
 once the revision is pushed.
+
+## Step 7 — Final run, and the merge if asked
+
+The slow suite runs once, when Magnus says the change has settled: "run the tests", "ready to
+merge", "looks good, let's finish" — **and any request to merge**, "go ahead and merge this"
+included. Never on your own initiative, and never because a run finished.
+
+**A merge request is never carried out before the full suite has passed on the current HEAD.**
+Asked to merge, run this step first, every time `fullRun` is not a pass on HEAD.
+
+1. In a worktree, `git switch <branch>` back onto it, under the same rule as a revision. Confirm
+   the tree is clean. `git fetch`, then note `git rev-parse HEAD`. If it differs from
+   `origin/<branch>`, halt: the PR holds a commit this run has not tested.
+2. If `fullRun` is `passed` and its `sha` is that HEAD, it has already run. Go to **Green**.
+3. Run `verification`, then `slowSuite.commands`. With no `slowSuite`, `verification` alone is the
+   final run.
+4. Record `fullRun` in `state.json`: the HEAD, `passed` or `failed`, and the time.
+
+**Green:** update the PR body's Verification. Take the current body (`gh pr view <pr> --json body
+-q .body`), replace the deferred line with a checked one carrying the result and the short SHA,
+and write it back with `gh pr edit <pr> --body-file <file>`:
+
+```markdown
+- [x] UI tests (XCUITest) — passed on 9c4e1f0 (12 passed)
+```
+
+Then, if he asked to merge, merge. If he only asked to run the tests, report and stop.
+
+**Red:** fix it on the branch the way you would a revision: a commit named for what changed, a
+push, then back to step 1. A failing test has two possible culprits, the code and the test. Fixing
+the code to do what the brief and plan specified is a fix. Changing a test's assertion to match
+what the code does now is a behaviour decision. **Halt** and take it to Magnus, as for any failure
+that needs a design or behaviour call. After two fix rounds with the suite still red, halt.
+**Never merge on red**, whatever he asked for.
+
+If no simulator, emulator, or device is available, the final run cannot pass. Halt, say so, and do
+not merge.
+
+**Merge** with `gh pr merge <pr> --match-head-commit <fullRun.sha>` and an explicit method, so a
+commit pushed after the run is refused. Never `--auto`, never `--admin`, and no `--delete-branch`:
+
+- Read the allowed methods with
+  `gh repo view --json mergeCommitAllowed,squashMergeAllowed,rebaseMergeAllowed`. Choose only among
+  those. If exactly one is allowed, use it.
+- If more than one is allowed, match the base branch's history: `--merge` if it is allowed and
+  `git log --merges -5 origin/<base>` shows merge commits, `--squash` if it is allowed, otherwise
+  `--rebase`.
+
+If GitHub refuses the merge because of a failing required check, a review requirement, or a
+conflict, halt and report what it said. Do not work around it. Once merged, record `fullRun.merged`
+in `state.json`, report the merge commit, then release the branch in a worktree as in step 6.
+
+**A commit after a green run makes it stale.** A revision after it goes through the fast loop like
+any other, puts the unchecked box back, and the next merge request runs the slow suite again.
 
 ## Failure handling
 
@@ -237,8 +316,9 @@ nothing. Not a finding. **Resume it by message**, preserving its transcript, rat
 a fresh one and paying for the context again. Two attempts, then halt.
 
 **Judgment needed** — the reviewer returns `ESCALATE`, the executor hits missing or contradictory
-plan information, the plan has open questions, verification fails, the tree is dirty, the push is
-rejected. **Halt.** `state.json` records where, and Magnus decides.
+plan information, the plan has open questions, verification fails, the final run stays red or needs
+a behaviour call, GitHub refuses a merge, the tree is dirty, the push is rejected. **Halt.**
+`state.json` records where, and Magnus decides.
 
 **Everything else** — keep going to the PR.
 
@@ -249,6 +329,8 @@ meant to save.
 **Never open a PR to cover a halt.** A pull request is a statement that the branch is ready to
 merge. A half-finished branch with an honest report in chat is a good outcome; a PR that looks
 finished and is not costs him a merge he has to undo.
+
+**Never merge after a halt in step 7**, even if the request to merge came first.
 
 To resume after any stop, re-invoke this skill: it picks up from the first step whose file is
 missing.

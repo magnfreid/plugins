@@ -81,8 +81,11 @@ The section that earns the plan its keep. Concrete and repo-specific:
 
 ### 7. Verification
 The exact commands that must pass before the work is considered done, in order. Analyzer, codegen,
-tests, build. Plus anything only a human can check, listed separately and honestly labelled as
-not-automatable.
+tests, build. If the stack has a slow suite — UI, integration, or instrumented tests, per
+`dev-workflow:feature`'s `references/stack-detection.md` — list its commands separately under
+**Final run only**. The commands above compile them. They run once, when the change has settled,
+and the implementer and reviewer do not run them. Plus anything only a human can check, listed
+separately and honestly labelled as not-automatable.
 
 ### 8. Open questions
 Things you could not decide without input. If there are none, write `None.` Do not manufacture

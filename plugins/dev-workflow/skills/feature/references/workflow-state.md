@@ -16,6 +16,15 @@
     "fvm dart analyze",
     "fvm flutter test"
   ],
+  "slowSuite": {
+    "name": "integration tests (integration_test)",
+    "commands": ["fvm flutter test integration_test"]
+  },
+  "fullRun": {
+    "sha": "9c4e1f0b2a7d3e8f6c5b4a3d2e1f0a9b8c7d6e5f",
+    "result": "passed",
+    "at": "2026-09-10T16:03:00+02:00"
+  },
   "steps": {
     "clarify":   "done",
     "plan":      "done",
@@ -39,6 +48,15 @@ cleared when that step later succeeds.
 
 `implementer` is the model confirmed at the gate.
 
+`verification` is the fast loop and `slowSuite` the slow suite, both from
+`references/stack-detection.md`. `slowSuite` is absent when the stack has none. Its `name` is how
+the handoff refers to it.
+
+`fullRun` is absent until the final run has happened, and records the latest one: the HEAD it ran
+on, `passed` or `failed`, and when. **It counts only while `sha` is the branch's current HEAD.** A
+commit after it, whether a revision or a fix, leaves it in place as history and makes it stale.
+Never write `passed` for a run that did not finish green.
+
 There is no `pr` field and no review level. The workflow does not open a pull request, and there is
 one review lens — if a change needs a harder look, Magnus asks for it at the handoff.
 
@@ -61,6 +79,9 @@ Re-invoking the skill in a repo with an existing workflow directory resumes rath
    watchdog, having produced nothing — is the one case that may be retried without asking, up to
    two attempts. Record each attempt in `halt`. Every other halt goes back to the user, because
    every other halt is something an agent decided rather than something that happened to it.
+7. **The final run is never resumed into.** It starts only when Magnus says the change has settled,
+   so it has no step, and re-invoking the skill does not start it. Report a stale or failed
+   `fullRun` at the handoff. Do not act on it.
 
 `commit` has no artifact file of its own. It is done when the branch's HEAD is a commit containing
 the work — check the git state, not the status field, and never commit twice.

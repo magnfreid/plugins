@@ -25,8 +25,10 @@ improvement. A plan executed exactly is reviewable; a plan quietly improved is n
 4. **Stay inside the file list.** If a change genuinely requires touching a file the plan does not
    name, stop and report it. Do not expand scope on your own authority.
 
-5. **Verify.** Run the plan's verification commands in order. Fix what they flag — that is in
-   scope. Do not proceed to reporting with a failing analyzer, a failing test, or a new warning.
+5. **Verify.** Run the plan's verification commands in order — but not the ones it lists under
+   *Final run only*. Those drive a simulator or a device and run once, later. Fix what they flag —
+   that is in scope. Do not proceed to reporting with a failing analyzer, a failing test, or a new
+   warning.
 
 6. **Report** — terse, factual:
    - Files created / modified, paths only.
